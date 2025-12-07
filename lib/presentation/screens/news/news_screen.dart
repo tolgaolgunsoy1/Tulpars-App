@@ -32,7 +32,10 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
     'Sivil Savunma',
     'Arama-Kurtarma',
     'Doğada Yaşam',
-    'Faaliyetler',];// Mock data - replace with actual data from Firebase
+    'Faaliyetler',
+  ];
+
+  // Mock data - replace with actual data from Firebase
   final List<Map<String, dynamic>> _newsList = [
     {
       'id': '1',
@@ -49,7 +52,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       'isFavorite': false,
       'commentCount': 12,
       'viewCount': 245,
-      'tags': ['arama-kurtarma', 'operasyon', 'kahramanmaraş'],},{
+      'tags': ['arama-kurtarma', 'operasyon', 'kahramanmaraş'],
+    },
+    {
       'id': '2',
       'title': 'Gençlik Spor Kulübü Basketbol Takımı Şampiyon Oldu',
       'summary':
@@ -64,7 +69,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       'isFavorite': true,
       'commentCount': 8,
       'viewCount': 189,
-      'tags': ['basketbol', 'şampiyona', 'gençlik'],},{
+      'tags': ['basketbol', 'şampiyona', 'gençlik'],
+    },
+    {
       'id': '3',
       'title': 'Sivil Savunma Eğitimi Başarıyla Tamamlandı',
       'summary':
@@ -79,7 +86,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       'isFavorite': false,
       'commentCount': 15,
       'viewCount': 312,
-      'tags': ['eğitim', 'sivil-savunma', 'deprem'],},{
+      'tags': ['eğitim', 'sivil-savunma', 'deprem'],
+    },
+    {
       'id': '4',
       'title': 'Doğada Yaşam Kulübü Trekking Etkinliği',
       'summary':
@@ -94,7 +103,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       'isFavorite': true,
       'commentCount': 6,
       'viewCount': 156,
-      'tags': ['trekking', 'doğa', 'saklıkent'],},{
+      'tags': ['trekking', 'doğa', 'saklıkent'],
+    },
+    {
       'id': '5',
       'title': 'Sosyal Dayanışma: Gıda Kolisi Dağıtımı',
       'summary':
@@ -109,18 +120,26 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       'isFavorite': false,
       'commentCount': 9,
       'viewCount': 278,
-      'tags': ['sosyal', 'gıda', 'dayanışma'],},];List<Map<String, dynamic>> get _filteredNews {
+      'tags': ['sosyal', 'gıda', 'dayanışma'],
+    },
+  ];
+
+  List<Map<String, dynamic>> get _filteredNews {
     return _newsList.where((news) {
       final matchesCategory =
           _selectedCategory == 'Tümü' || news['category'] == _selectedCategory;
       final matchesSearch = _searchQuery.isEmpty ||
           news['title'].toString().toLowerCase().contains(
-                _searchQuery.toLowerCase()) ||
+                _searchQuery.toLowerCase(),
+              ) ||
           news['summary'].toString().toLowerCase().contains(
-                _searchQuery.toLowerCase()) ||
+                _searchQuery.toLowerCase(),
+              ) ||
           news['tags'].any(
             (tag) => tag.toString().toLowerCase().contains(
-                  _searchQuery.toLowerCase()));
+                  _searchQuery.toLowerCase(),
+                ),
+          );
       return matchesCategory && matchesSearch;
     }).toList();
   }
@@ -187,7 +206,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
   void _shareNews(Map<String, dynamic> news) {
     Share.share(
       '${news['title']}\n\n${news['summary']}\n\nHaberi okumak için: ${AppConstants.websiteUrl}',
-      subject: news['title'],);}
+      subject: news['title'],
+    );
+  }
 
   void _openNewsDetail(Map<String, dynamic> news) {
     // TODO: Navigate to news detail screen
@@ -222,12 +243,12 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                 ),
                 style: const TextStyle(color: Colors.white),
                 autofocus: true,
-            )
+              )
             : const Text(
                 'Haberler',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            actions: [
+              ),
+        actions: [
           // Connectivity indicator
           if (!_isConnected)
             Padding(
@@ -250,7 +271,10 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
             onPressed: () {
               // TODO: Open advanced filters
               debugPrint('Open filters');
-            },),],bottom: _isSearching
+            },
+          ),
+        ],
+        bottom: _isSearching
             ? null
             : TabBar(
                 controller: _tabController,
@@ -259,7 +283,10 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white70,
                 tabs:
-                    _categories.map((category) => Tab(text: category)).toList(),),), body: RefreshIndicator(
+                    _categories.map((category) => Tab(text: category)).toList(),
+              ),
+      ),
+      body: RefreshIndicator(
         onRefresh: _refreshNews,
         child: _filteredNews.isEmpty
             ? _buildEmptyState()
@@ -272,7 +299,11 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                 itemBuilder: (context, index) {
                   final news = _filteredNews[index];
                   return _buildNewsCard(news);
-                },),),);}
+                },
+              ),
+      ),
+    );
+  }
 
   Widget _buildEmptyState() {
     return Center(
@@ -356,7 +387,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
             // News Image
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12)), child: Image.network(
+                top: Radius.circular(12),
+              ),
+              child: Image.network(
                 news['image'],
                 height: 180,
                 width: double.infinity,
@@ -366,7 +399,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                   return Container(
                     height: 180,
                     color: Colors.grey.shade200,
-                    child: const Center(child: CircularProgressIndicator()),);},
+                    child: const Center(child: CircularProgressIndicator()),
+                  );
+                },
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     height: 180,
@@ -374,106 +409,199 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                     child: const Icon(
                       Icons.image_not_supported,
                       size: 50,
-                      color: Colors.grey,),);},),),// Content
+                      color: Colors.grey,
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Content
             Padding(
-              padding: const EdgeInsets.all(16) child: Column(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Category Badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
-                      vertical: 4,), decoration: BoxDecoration(
-                      color: _getCategoryColor(news['category']), borderRadius: BorderRadius.circular(12)), child: Text(
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _getCategoryColor(news['category']),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
                       news['category'],
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
-                        fontWeight: FontWeight.w500,),),),const SizedBox(height: 8)// Title
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Title
                   Text(
                     news['title'],
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A) height: 1.3,), maxLines: 2,
-                    overflow: TextOverflow.ellipsis,),const SizedBox(height: 8)// Summary
+                      color: Color(0xFF0F172A),
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  // Summary
                   Text(
                     news['summary'],
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade600,
-                      height: 1.4,), maxLines: 3,
-                    overflow: TextOverflow.ellipsis,),const SizedBox(height: 12)// Meta Information
+                      height: 1.4,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 12),
+                  // Meta Information
                   Row(
                     children: [
                       Icon(
                         Icons.person_outline,
                         size: 16,
-                        color: Colors.grey.shade500,),const SizedBox(width: 4)Text(
+                        color: Colors.grey.shade500,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
                         news['author'],
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,),),const SizedBox(width: 12)Icon(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(
                         Icons.access_time,
                         size: 16,
-                        color: Colors.grey.shade500,),const SizedBox(width: 4)Text(
+                        color: Colors.grey.shade500,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
                         '${news['readTime']} okuma',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,),),],),const SizedBox(height: 8)// Date and Stats
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Date and Stats
                   Row(
                     children: [
                       Text(
-                        _formatDate(news['date']), style: TextStyle(
+                        _formatDate(news['date']),
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade500,),),const Spacer(),
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                      const Spacer(),
                       Row(
                         children: [
                           Icon(
                             Icons.visibility,
                             size: 16,
-                            color: Colors.grey.shade500,),const SizedBox(width: 4)Text(
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
                             '${news['viewCount']}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,),),],),],),const SizedBox(height: 12)// Action Buttons
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // Action Buttons
                   Row(
                     children: [
                       // Comments
                       TextButton.icon(
-                        onPressed: () => _openComments(news) icon: Icon(
+                        onPressed: () => _openComments(news),
+                        icon: Icon(
                           Icons.comment_outlined,
                           size: 18,
-                          color: Colors.grey.shade600,), label: Text(
+                          color: Colors.grey.shade600,
+                        ),
+                        label: Text(
                           '${news['commentCount']}',
                           style: TextStyle(
                             color: Colors.grey.shade600,
-                            fontSize: 14,),), style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 8)),),const Spacer(),
+                            fontSize: 14,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                      ),
+                      const Spacer(),
 
                       // Favorite
                       IconButton(
-                        onPressed: () => _toggleFavorite(news['id']), icon: Icon(
+                        onPressed: () => _toggleFavorite(news['id']),
+                        icon: Icon(
                           news['isFavorite']
                               ? Icons.favorite
                               : Icons.favorite_border,
                           color: news['isFavorite']
                               ? Colors.red
-                              : Colors.grey.shade600,), tooltip: news['isFavorite']
+                              : Colors.grey.shade600,
+                        ),
+                        tooltip: news['isFavorite']
                             ? 'Favorilerden çıkar'
-                            : 'Favorilere ekle',),// Share
+                            : 'Favorilere ekle',
+                      ),
+                      // Share
                       IconButton(
-                        onPressed: () => _shareNews(news) icon: Icon(
+                        onPressed: () => _shareNews(news),
+                        icon: Icon(
                           Icons.share_outlined,
-                          color: Colors.grey.shade600,), tooltip: 'Paylaş',),// Notifications
+                          color: Colors.grey.shade600,
+                        ),
+                        tooltip: 'Paylaş',
+                      ),
+                      // Notifications
                       IconButton(
                         onPressed: () {
                           // TODO: Toggle notifications for this news
                           debugPrint(
-                            'Toggle notifications for news: ${news['id']}',);},
+                            'Toggle notifications for news: ${news['id']}',
+                          );
+                        },
                         icon: Icon(
                           Icons.notifications_outlined,
-                          color: Colors.grey.shade600,), tooltip: 'Bildirim ayarları',),],),],),),],),),);}
+                          color: Colors.grey.shade600,
+                        ),
+                        tooltip: 'Bildirim ayarları',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Color _getCategoryColor(String category) {
     switch (category) {
@@ -509,9 +637,3 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
     }
   }
 }
-
-
-
-
-
-

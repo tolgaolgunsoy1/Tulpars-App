@@ -22,9 +22,19 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _animationController = AnimationController(
-      duration: const Duration(seconds: 2) vsync: this,);_fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeIn));_scaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut));_animationController.forward();
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
+
+    _animationController.forward();
   }
 
   @override
@@ -47,16 +57,23 @@ class _SplashScreenState extends State<SplashScreen>
           // Show error and retry option
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message) backgroundColor: const Color(0xFFDC2626) action: SnackBarAction(
+              content: Text(state.message),
+              backgroundColor: const Color(0xFFDC2626),
+              action: SnackBarAction(
                 label: 'Tekrar Dene',
                 textColor: Colors.white,
                 onPressed: () {
                   // Retry app initialization
                   context.read<AppBloc>().add(AppStarted());
-                },),),);}
+                },
+              ),
+            ),
+          );
+        }
       },
       child: Scaffold(
-        backgroundColor: const Color(AppConstants.primaryColor) body: Center(
+        backgroundColor: const Color(AppConstants.primaryColor),
+        body: Center(
           child: AnimatedBuilder(
             animation: _animationController,
             builder: (context, child) {
@@ -76,25 +93,48 @@ class _SplashScreenState extends State<SplashScreen>
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2) blurRadius: 20,
-                              offset: const Offset(0, 10)),],), child: const Icon(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
                           Icons.shield,
                           size: 60,
-                          color: Color(AppConstants.primaryColor)),),const SizedBox(height: 24)const Text(
+                          color: Color(AppConstants.primaryColor),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
                         AppConstants.appName,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,),),const SizedBox(height: 8)Text(
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
                         'Sivil Savunma • Arama Kurtarma',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white.withValues(alpha: 0.8)), textAlign: TextAlign.center,),const SizedBox(height: 48)const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),],),),);},),),),);}
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 48),
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
 }
-
-
-
-
-
-
