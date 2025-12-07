@@ -1,24 +1,5 @@
 # 🚀 Tulpars Derneği Mobil Uygulaması
-
-[![Flutter](https://img.shields.io/badge/Flutter-3.0+-02569B?style=for-the-badge&logo=flutter)](https://flutter.dev/)
-[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![BLoC](https://img.shields.io/badge/BLoC-45B8AC?style=for-the-badge&logo=flutter&logoColor=white)](https://bloclibrary.dev/)
-[![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)](#)
-[![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)](#)
-
 Tulpars Derneği için geliştirilmiş kapsamlı mobil uygulama. Sivil savunma, arama-kurtarma, gençlik sporları ve sosyal dayanışma alanlarında hizmet veren derneğin ihtiyaçlarını karşılamak üzere tasarlanmıştır.
-
-## 📱 Uygulama Ekran Görüntüleri
-
-### Ana Ekranlar
-| Ana Sayfa | Giriş Ekranı | Kayıt Ekranı |
-|-----------|--------------|---------------|
-| ![Ana Sayfa](https://via.placeholder.com/200x400/003875/FFFFFF?text=Ana+Sayfa) | ![Giriş](https://via.placeholder.com/200x400/003875/FFFFFF?text=Giriş) | ![Kayıt](https://via.placeholder.com/200x400/003875/FFFFFF?text=Kayıt) |
-
-### Özellik Ekranları
-| Acil Durum | Eğitim | Galeri |
-|------------|--------|--------|
-| ![Acil Durum](https://via.placeholder.com/200x400/DC2626/FFFFFF?text=Acil+Durum) | ![Eğitim](https://via.placeholder.com/200x400/F59E0B/FFFFFF?text=Eğitim) | ![Galeri](https://via.placeholder.com/200x400/10B981/FFFFFF?text=Galeri) |
 
 ## ✨ Özellikler
 
@@ -282,14 +263,6 @@ flutter build web --release
 
 Bu proje **MIT lisansı** altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
-## 📞 İletişim ve Destek
-
-- **👨‍💻 Geliştirici**: Tolga Olgunsoy
-- **📧 E-posta**: tolgaolgunsoy1@gmail.com
-- **🐙 GitHub**: [@tolgaolgunsoy1](https://github.com/tolgaolgunsoy1)
-- **🌐 Web**: [tulpars.org.tr](https://www.tulpars.org.tr/)
-- **📱 Demo**: [Google Play Store](#) (yakında)
-
 ### 🆘 Sorun Bildirimi
 Herhangi bir sorun yaşarsanız:
 1. [Issues](https://github.com/tolgaolgunsoy1/Tulpars-App/issues) sayfasını kullanın
@@ -304,13 +277,3 @@ Herhangi bir sorun yaşarsanız:
 **Tulpars Derneği Mobil Uygulaması**, sivil savunma ve arama-kurtarma alanında **production-ready** bir çözümdür. Tüm temel özellikler implement edilmiş, kapsamlı testlerden geçmiş ve kullanıcı deneyimine odaklanarak geliştirilmiştir.
 
 **🚀 Uygulama şu anda tamamen çalışır durumda ve kullanıma hazırdır!**
-
-### 🌟 Öne Çıkan Başarılar
-- ✅ **355 syntax hatası** → **39 hataya** düşürüldü (%89 iyileşme)
-- ✅ **10+ yeni ekran** eklendi
-- ✅ **Firebase entegrasyonu** tamamlandı
-- ✅ **Modern UI/UX** implementasyonu
-- ✅ **Accessibility** desteği eklendi
-- ✅ **Performance optimizations** yapıldı
-
-**Bu uygulama, Tulpars Derneği'nin dijital dönüşümünde önemli bir adımdır.** 🎯
