@@ -22,44 +22,61 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'message': 'İlk Yardım Eğitimi kayıtları başladı. Kontenjan sınırlıdır.',
       'type': 'event',
       'timestamp': DateTime.now().subtract(const Duration(minutes: 30)),
-      'isRead': false,},{
+      'isRead': false,
+    },
+    {
       'id': '2',
       'title': 'Operasyon Güncellemesi',
       'message':
           'Hatay arama kurtarma operasyonunda 3 vatandaş daha kurtarıldı.',
       'type': 'emergency',
       'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
-      'isRead': true,},{
+      'isRead': true,
+    },
+    {
       'id': '3',
       'title': 'Haber: Şampiyona Başarısı',
       'message':
           'Basketbol takımımız bölgesel şampiyonada birincilik elde etti.',
       'type': 'news',
       'timestamp': DateTime.now().subtract(const Duration(hours: 5)),
-      'isRead': true,},{
+      'isRead': true,
+    },
+    {
       'id': '4',
       'title': 'Genel Kurul Toplantısı',
       'message': '15 Ocak 2025 tarihinde genel kurul toplantısı yapılacaktır.',
       'type': 'general',
       'timestamp': DateTime.now().subtract(const Duration(days: 1)),
-      'isRead': false,},{
+      'isRead': false,
+    },
+    {
       'id': '5',
       'title': 'Gıda Kampanyası',
       'message':
           'Ramazan ayında ihtiyaç sahibi ailelere gıda dağıtımı başlatıldı.',
       'type': 'news',
       'timestamp': DateTime.now().subtract(const Duration(days: 2)),
-      'isRead': true,},];@override
+      'isRead': true,
+    },
+  ];
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC) appBar: AppBar(
-        backgroundColor: const Color(AppConstants.primaryColor) elevation: 0,
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: const Color(AppConstants.primaryColor),
+        elevation: 0,
         title: const Text(
           'Bildirimler',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,),), centerTitle: true,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
         actions: [
           TextButton(
             onPressed: _markAllAsRead,
@@ -67,7 +84,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               'Tümünü Okundu İşaretle',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 12,),),),],), body: SafeArea(
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SafeArea(
         child: Column(
           children: [
             // Notification Settings
@@ -77,16 +100,30 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Expanded(
               child: _notifications.isEmpty
                   ? _buildEmptyState()
-                  : _buildNotificationsList(),),],),),);}
+                  : _buildNotificationsList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildSettingsSection() {
     return Container(
-      margin: const EdgeInsets.all(16) padding: const EdgeInsets.all(20) decoration: BoxDecoration(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16) boxShadow: [
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05) blurRadius: 10,
-            offset: const Offset(0, 2)),],), child: Column(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
@@ -94,40 +131,69 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF0F172A)),),const SizedBox(height: 16)_buildSettingItem(
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildSettingItem(
             'Acil Durum',
             'Operasyon ve acil durum bildirimleri',
             _emergencyEnabled,
-            (value) => setState(() => _emergencyEnabled = value)const Color(0xFFDC2626)),_buildSettingItem(
+            (value) => setState(() => _emergencyEnabled = value),
+            const Color(0xFFDC2626),
+          ),
+          _buildSettingItem(
             'Haberler',
             'Dernek haberleri ve duyuruları',
             _newsEnabled,
-            (value) => setState(() => _newsEnabled = value)const Color(0xFFF59E0B)),_buildSettingItem(
+            (value) => setState(() => _newsEnabled = value),
+            const Color(0xFFF59E0B),
+          ),
+          _buildSettingItem(
             'Etkinlikler',
             'Eğitim ve etkinlik duyuruları',
             _eventsEnabled,
-            (value) => setState(() => _eventsEnabled = value)const Color(0xFF10B981)),_buildSettingItem(
+            (value) => setState(() => _eventsEnabled = value),
+            const Color(0xFF10B981),
+          ),
+          _buildSettingItem(
             'Genel',
             'Genel bildirimler',
             _generalEnabled,
-            (value) => setState(() => _generalEnabled = value)const Color(AppConstants.primaryColor)),],),);}
+            (value) => setState(() => _generalEnabled = value),
+            const Color(AppConstants.primaryColor),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSettingItem(
     String title,
     String subtitle,
     bool value,
     ValueChanged<bool> onChanged,
-    Color color,) {
+    Color color,
+  ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12) child: Row(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Row(
         children: [
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1) borderRadius: BorderRadius.circular(8)), child: Icon(
-              _getNotificationIcon(title) color: color,
-              size: 20,),),const SizedBox(width: 12)Expanded(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              _getNotificationIcon(title),
+              color: color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -136,38 +202,66 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F172A)),),Text(
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+                Text(
                   subtitle,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF64748B)),),],),),Switch(
+                    color: Color(0xFF64748B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
             value: value,
             onChanged: onChanged,
-            activeThumbColor: color,),],),);}
+            activeColor: color,
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildNotificationsList() {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16) itemCount: _notifications.length,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: _notifications.length,
       itemBuilder: (context, index) {
         final notification = _notifications[index];
         return _buildNotificationItem(notification);
-      },);}
+      },
+    );
+  }
 
   Widget _buildNotificationItem(Map<String, dynamic> notification) {
     final isUnread = !notification['isRead'];
     final color = _getNotificationColor(notification['type']);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8) decoration: BoxDecoration(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12) boxShadow: [
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05) blurRadius: 8,
-            offset: const Offset(0, 1)),],border: isUnread
-            ? Border.all(color: color.withValues(alpha: 0.3) width: 2)
-            : null,), child: InkWell(
-        onTap: () => _markAsRead(notification['id']), borderRadius: BorderRadius.circular(12) child: Padding(
-          padding: const EdgeInsets.all(16) child: Row(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 1),
+          ),
+        ],
+        border: isUnread
+            ? Border.all(color: color.withOpacity(0.3), width: 2)
+            : null,
+      ),
+      child: InkWell(
+        onTap: () => _markAsRead(notification['id']),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Notification Icon
@@ -175,9 +269,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1) borderRadius: BorderRadius.circular(8)), child: Icon(
-                  _getNotificationIconFromType(notification['type']), color: color,
-                  size: 20,),),const SizedBox(width: 12)// Content
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  _getNotificationIconFromType(notification['type']),
+                  color: color,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,22 +293,44 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               fontSize: 16,
                               fontWeight:
                                   isUnread ? FontWeight.bold : FontWeight.w600,
-                              color: const Color(0xFF0F172A)),),),if (isUnread)
+                              color: const Color(0xFF0F172A),
+                            ),
+                          ),
+                        ),
+                        if (isUnread)
                           Container(
                             width: 8,
                             height: 8,
                             decoration: BoxDecoration(
                               color: color,
-                              shape: BoxShape.circle,),),],),const SizedBox(height: 4)Text(
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
                       notification['message'],
                       style: TextStyle(
                         fontSize: 14,
                         color: isUnread
                             ? const Color(0xFF0F172A)
-                            : const Color(0xFF64748B) height: 1.4,),),const SizedBox(height: 8)Text(
-                      _formatTimestamp(notification['timestamp']), style: const TextStyle(
+                            : const Color(0xFF64748B),
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _formatTimestamp(notification['timestamp']),
+                      style: const TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF64748B)),),],),),// Action Menu
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Action Menu
               PopupMenuButton<String>(
                 onSelected: (value) {
                   switch (value) {
@@ -222,11 +346,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   if (!notification['isRead'])
                     const PopupMenuItem(
                       value: 'read',
-                      child: Text('Okundu İşaretle'),),const PopupMenuItem(
+                      child: Text('Okundu İşaretle'),
+                    ),
+                  const PopupMenuItem(
                     value: 'delete',
-                    child: Text('Sil'),),],icon: const Icon(
+                    child: Text('Sil'),
+                  ),
+                ],
+                icon: const Icon(
                   Icons.more_vert,
-                  color: Color(0xFF64748B) size: 20,),),],),),),);}
+                  color: Color(0xFF64748B),
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildEmptyState() {
     return Center(
@@ -236,16 +374,29 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Icon(
             Icons.notifications_off_outlined,
             size: 80,
-            color: Colors.grey.shade400,),const SizedBox(height: 16)Text(
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
             'Henüz bildirim yok',
             style: TextStyle(
               fontSize: 18,
               color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,),),const SizedBox(height: 8)Text(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
             'Yeni bildirimler burada görünecek',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade500,),),],),);}
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _markAsRead(String notificationId) {
     setState(() {
@@ -263,7 +414,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Tüm bildirimler okundu olarak işaretlendi'), backgroundColor: Color(AppConstants.successColor)),);}
+        content: Text('Tüm bildirimler okundu olarak işaretlendi'),
+        backgroundColor: Color(AppConstants.successColor),
+      ),
+    );
+  }
 
   void _deleteNotification(String notificationId) {
     setState(() {
@@ -271,7 +426,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Bildirim silindi'), backgroundColor: Color(AppConstants.successColor)),);}
+        content: Text('Bildirim silindi'),
+        backgroundColor: Color(AppConstants.successColor),
+      ),
+    );
+  }
 
   IconData _getNotificationIcon(String title) {
     switch (title) {
@@ -336,9 +495,3 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 }
-
-
-
-
-
-

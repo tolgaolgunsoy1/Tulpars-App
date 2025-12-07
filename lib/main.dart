@@ -4,13 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'core/services/auth_service.dart';
 import 'core/services/cache_service.dart';
 import 'core/services/connectivity_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'firebase_options.dart';
-import 'presentation/bloc/app/app_bloc.dart';
-import 'presentation/bloc/auth/auth_bloc.dart';
+import 'presentation/bloc/app/app_bloc.dart' as app;
+import 'presentation/bloc/auth/auth_bloc.dart' as auth;
 import 'presentation/screens/auth/auth_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/auth/register_screen.dart';
@@ -52,26 +53,41 @@ void main() async {
   final notificationService = NotificationService();
   await notificationService.initialize();
 
-  runApp(const TulparsApp());
+  // Initialize auth service
+  final authService = AuthService();
+
+  runApp(TulparsApp(authService: authService));
 }
 
 class TulparsApp extends StatelessWidget {
-  const TulparsApp({super.key});
+  final AuthService authService;
+
+  const TulparsApp({super.key, required this.authService});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AppBloc>(
-          create: (context) => AppBloc()..add(AppStarted()),),BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc()..add(AuthStarted()),),],child: MaterialApp.router(
+        BlocProvider<app.AppBloc>(
+          create: (context) => app.AppBloc()..add(app.AppStarted()),
+        ),
+        BlocProvider<auth.AuthBloc>(
+          create: (context) =>
+              auth.AuthBloc(authService)..add(auth.AppStarted()),
+        ),
+      ],
+      child: MaterialApp.router(
         title: 'Tulpars Derneği',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
-        locale: const Locale('tr', 'TR'), supportedLocales: const [Locale('tr', 'TR'), Locale('en', 'US')],),);}
+        locale: const Locale('tr', 'TR'),
+        supportedLocales: const [Locale('tr', 'TR'), Locale('en', 'US')],
+      ),
+    );
+  }
 }
 
 final GoRouter _router = GoRouter(
@@ -79,37 +95,49 @@ final GoRouter _router = GoRouter(
     GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),),GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/register',
-      builder: (context, state) => const RegisterScreen(),),GoRoute(path: '/main', builder: (context, state) => const HomeScreen()),
+      builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(path: '/main', builder: (context, state) => const HomeScreen()),
     GoRoute(
-        path: '/emergency',
-        builder: (context, state) => const EmergencyScreen(),),
+      path: '/emergency',
+      builder: (context, state) => const EmergencyScreen(),
+    ),
     GoRoute(
-        path: '/donations',
-        builder: (context, state) => const DonationsScreen(),),
+      path: '/donations',
+      builder: (context, state) => const DonationsScreen(),
+    ),
     GoRoute(
-        path: '/membership',
-        builder: (context, state) => const MembershipScreen(),),
+      path: '/membership',
+      builder: (context, state) => const MembershipScreen(),
+    ),
     GoRoute(
-        path: '/profile', builder: (context, state) => const ProfileScreen(),),
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
+    ),
     GoRoute(path: '/sports', builder: (context, state) => const SportsScreen()),
     GoRoute(
-        path: '/education',
-        builder: (context, state) => const EducationScreen(),),
+      path: '/education',
+      builder: (context, state) => const EducationScreen(),
+    ),
     GoRoute(
-        path: '/gallery', builder: (context, state) => const GalleryScreen(),),
+      path: '/gallery',
+      builder: (context, state) => const GalleryScreen(),
+    ),
     GoRoute(
-        path: '/operations',
-        builder: (context, state) => const OperationsScreen(),),
+      path: '/operations',
+      builder: (context, state) => const OperationsScreen(),
+    ),
     GoRoute(
-        path: '/notifications',
-        builder: (context, state) => const NotificationsScreen(),),
+      path: '/notifications',
+      builder: (context, state) => const NotificationsScreen(),
+    ),
     // Add more routes here as screens are implemented
   ],
-  initialLocation: '/',);
-
-
-
+  initialLocation: '/',
+);

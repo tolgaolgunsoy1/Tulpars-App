@@ -1,158 +1,120 @@
-import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:equatable/equatable.dart';
 import '../../../core/services/auth_service.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final AuthService _authService;
 
-  AuthBloc({AuthService? authService})
-      : _authService = authService ?? AuthService(),
-        super(AuthInitial()) {
-    on<AuthStarted>(_onAuthStarted);
+  AuthBloc(this._authService) : super(AuthInitial()) {
+    on<AppStarted>(_onAppStarted);
     on<LoginRequested>(_onLoginRequested);
     on<RegisterRequested>(_onRegisterRequested);
     on<GoogleSignInRequested>(_onGoogleSignInRequested);
     on<AppleSignInRequested>(_onAppleSignInRequested);
     on<PasswordResetRequested>(_onPasswordResetRequested);
-    on<SignOutRequested>(_onSignOutRequested);
-    on<AuthStatusChanged>(_onAuthStatusChanged);
-
-    // Listen to authentication state changes
-    _authService.authStateChanges.listen((user) {
-      if (user != null) {
-        add(const AuthStatusChanged(true));
-      } else {
-        add(const AuthStatusChanged(false));
-      }
-    });
+    on<LogoutRequested>(_onLogoutRequested);
   }
-  final AuthService _authService;
 
-  void _onAuthStarted(AuthStarted event, Emitter<AuthState> emit) {
-    final user = _authService.currentUser;
-    if (user != null) {
-      emit(Authenticated(
-        userId: user.uid,
-        email: user.email,
-        displayName: user.displayName,),);
-    } else {
-      emit(Unauthenticated());
+  void _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final user = _authService.currentUser;
+      if (user != null) {
+        emit(Authenticated(user: user));
+      } else {
+        emit(Unauthenticated());
+      }
+    } catch (e) {
+      emit(AuthError(message: 'Oturum kontrolü sırasında hata: $e'));
     }
   }
 
   void _onLoginRequested(LoginRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final result = await _authService.signInWithEmailAndPassword(
+      final userCredential = await _authService.signInWithEmailAndPassword(
         event.email,
-        event.password,);emit(Authenticated(
-        userId: result.user?.uid,
-        email: result.user?.email,
-        displayName: result.user?.displayName,),);
+        event.password,
+      );
+      emit(Authenticated(user: userCredential.user!));
     } catch (e) {
-      emit(AuthError(e.toString()));
-      emit(Unauthenticated());
+      emit(AuthError(message: e.toString()));
     }
   }
 
   void _onRegisterRequested(
-      RegisterRequested event, Emitter<AuthState> emit,) async {
+      RegisterRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final result = await _authService.createUserWithEmailAndPassword(
+      final userCredential = await _authService.createUserWithEmailAndPassword(
         event.email,
-        event.password,);// Update user profile
-      final fullName = '${event.name} ${event.surname}';
-      await _authService.updateProfile(displayName: fullName);
+        event.password,
+      );
 
-      emit(Authenticated(
-        userId: result.user?.uid,
-        email: result.user?.email,
-        displayName: fullName,),);
+      // Update display name if provided
+      if (event.name.isNotEmpty) {
+        await _authService.updateProfile(displayName: event.name);
+      }
+
+      emit(Authenticated(user: userCredential.user!));
     } catch (e) {
-      emit(AuthError(e.toString()));
-      emit(Unauthenticated());
+      emit(AuthError(message: e.toString()));
     }
   }
 
   void _onGoogleSignInRequested(
-      GoogleSignInRequested event, Emitter<AuthState> emit,) async {
+      GoogleSignInRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final result = await _authService.signInWithGoogle();
-      if (result != null) {
-        emit(Authenticated(
-          userId: result.user?.uid,
-          email: result.user?.email,
-          displayName: result.user?.displayName,),);
+      final userCredential = await _authService.signInWithGoogle();
+      if (userCredential != null) {
+        emit(Authenticated(user: userCredential.user!));
       } else {
         emit(Unauthenticated());
       }
     } catch (e) {
-      emit(AuthError(e.toString()));
-      emit(Unauthenticated());
+      emit(AuthError(message: e.toString()));
     }
   }
 
   void _onAppleSignInRequested(
-      AppleSignInRequested event, Emitter<AuthState> emit,) async {
+      AppleSignInRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final result = await _authService.signInWithApple();
-      if (result != null) {
-        emit(Authenticated(
-          userId: result.user?.uid,
-          email: result.user?.email,
-          displayName: result.user?.displayName,),);
+      final userCredential = await _authService.signInWithApple();
+      if (userCredential != null) {
+        emit(Authenticated(user: userCredential.user!));
       } else {
         emit(Unauthenticated());
       }
     } catch (e) {
-      emit(AuthError(e.toString()));
-      emit(Unauthenticated());
+      emit(AuthError(message: e.toString()));
     }
   }
 
   void _onPasswordResetRequested(
-      PasswordResetRequested event, Emitter<AuthState> emit,) async {
+      PasswordResetRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
       await _authService.sendPasswordResetEmail(event.email);
-      emit(PasswordResetSent(event.email));
+      emit(PasswordResetSent(email: event.email));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(message: e.toString()));
     }
   }
 
-  void _onSignOutRequested(
-      SignOutRequested event, Emitter<AuthState> emit,) async {
+  void _onLogoutRequested(
+      LogoutRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
       await _authService.signOut();
       emit(Unauthenticated());
     } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
-
-  void _onAuthStatusChanged(AuthStatusChanged event, Emitter<AuthState> emit) {
-    if (event.isAuthenticated) {
-      final user = _authService.currentUser;
-      if (user != null) {
-        emit(Authenticated(
-          userId: user.uid,
-          email: user.email,
-          displayName: user.displayName,),);
-      }
-    } else {
-      emit(Unauthenticated());
+      emit(AuthError(message: e.toString()));
     }
   }
 }
-
-
-
-

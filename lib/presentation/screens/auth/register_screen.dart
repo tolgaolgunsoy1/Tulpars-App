@@ -35,8 +35,13 @@ class _RegisterScreenState extends State<RegisterScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800) vsync: this,);_fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));_animationController.forward();
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
   }
 
   @override
@@ -95,8 +100,8 @@ class _RegisterScreenState extends State<RegisterScreen>
       _showErrorSnackBar('E-posta alanı zorunludur');
       return false;
     }
-    if (!RegExp(
-      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',),.hasMatch(_emailController.text)) {
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+        .hasMatch(_emailController.text)) {
       _showErrorSnackBar('Geçerli bir e-posta adresi girin');
       return false;
     }
@@ -150,19 +155,35 @@ class _RegisterScreenState extends State<RegisterScreen>
 
     context.read<AuthBloc>().add(
           RegisterRequested(
-            name: _nameController.text.trim(), surname: _surnameController.text.trim(), email: _emailController.text.trim(), phone: _phoneController.text.trim(), password: _passwordController.text,),);}
+            name:
+                '${_nameController.text.trim()} ${_surnameController.text.trim()}',
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          ),
+        );
+  }
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message) backgroundColor: const Color(0xFFDC2626) behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),),);}
+        content: Text(message),
+        backgroundColor: const Color(0xFFDC2626),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
 
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message) backgroundColor: const Color(0xFF10B981) behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),),);}
+        content: Text(message),
+        backgroundColor: const Color(0xFF10B981),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,18 +200,28 @@ class _RegisterScreenState extends State<RegisterScreen>
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC) appBar: AppBar(
+        backgroundColor: const Color(0xFFF8FAFC),
+        appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF003875)), onPressed: () => context.go('/auth'),), title: const Text(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF003875)),
+            onPressed: () => context.go('/auth'),
+          ),
+          title: const Text(
             'Kayıt Ol',
             style: TextStyle(
-              color: Color(0xFF003875) fontWeight: FontWeight.bold,),),), body: SafeArea(
+              color: Color(0xFF003875),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        body: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24) child: Form(
+              padding: const EdgeInsets.all(24),
+              child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -198,13 +229,26 @@ class _RegisterScreenState extends State<RegisterScreen>
                     // Progress Indicator
                     _buildProgressIndicator(),
 
-                    const SizedBox(height: 32)// Step Content
+                    const SizedBox(height: 32),
+
+                    // Step Content
                     _buildStepContent(),
 
-                    const SizedBox(height: 32)// Navigation Buttons
+                    const SizedBox(height: 32),
+
+                    // Navigation Buttons
                     _buildNavigationButtons(),
 
-                    const SizedBox(height: 20)],),),),),),),);}
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildProgressIndicator() {
     return Row(
@@ -212,10 +256,18 @@ class _RegisterScreenState extends State<RegisterScreen>
         return Expanded(
           child: Container(
             height: 4,
-            margin: const EdgeInsets.symmetric(horizontal: 4) decoration: BoxDecoration(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
               color: index <= _currentStep
                   ? const Color(0xFF003875)
-                  : const Color(0xFFE2E8F0) borderRadius: BorderRadius.circular(2)),),);}),);}
+                  : const Color(0xFFE2E8F0),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+        );
+      }),
+    );
+  }
 
   Widget _buildStepContent() {
     switch (_currentStep) {
@@ -239,40 +291,59 @@ class _RegisterScreenState extends State<RegisterScreen>
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A)),),const SizedBox(height: 8)const Text(
+            color: Color(0xFF0F172A),
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
           'Hesabınızı oluşturmak için bilgilerinizi girin',
-          style: TextStyle(fontSize: 16, color: Color(0xFF64748B)),),const SizedBox(height: 32)// Name
+          style: TextStyle(fontSize: 16, color: Color(0xFF64748B)),
+        ),
+        const SizedBox(height: 32),
+        // Name
         TextFormField(
           controller: _nameController,
           textCapitalization: TextCapitalization.words,
           decoration: const InputDecoration(
             labelText: 'Ad',
             hintText: 'Adınızı girin',
-            prefixIcon: Icon(Icons.person_outline, color: Color(0xFF64748B)),), validator: (value) {
+            prefixIcon: Icon(Icons.person_outline, color: Color(0xFF64748B)),
+          ),
+          validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Ad alanı zorunludur';
             }
             return null;
-          },),const SizedBox(height: 16)// Surname
+          },
+        ),
+        const SizedBox(height: 16),
+        // Surname
         TextFormField(
           controller: _surnameController,
           textCapitalization: TextCapitalization.words,
           decoration: const InputDecoration(
             labelText: 'Soyad',
             hintText: 'Soyadınızı girin',
-            prefixIcon: Icon(Icons.person_outline, color: Color(0xFF64748B)),), validator: (value) {
+            prefixIcon: Icon(Icons.person_outline, color: Color(0xFF64748B)),
+          ),
+          validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Soyad alanı zorunludur';
             }
             return null;
-          },),const SizedBox(height: 16)// Email
+          },
+        ),
+        const SizedBox(height: 16),
+        // Email
         TextFormField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: const InputDecoration(
             labelText: 'E-posta',
             hintText: 'ornek@email.com',
-            prefixIcon: Icon(Icons.email_outlined, color: Color(0xFF64748B)),), validator: (value) {
+            prefixIcon: Icon(Icons.email_outlined, color: Color(0xFF64748B)),
+          ),
+          validator: (value) {
             if (value == null || value.isEmpty) {
               return 'E-posta alanı zorunludur';
             }
@@ -280,16 +351,24 @@ class _RegisterScreenState extends State<RegisterScreen>
               return 'Geçerli bir e-posta adresi girin';
             }
             return null;
-          },),const SizedBox(height: 16)// Phone
+          },
+        ),
+        const SizedBox(height: 16),
+        // Phone
         TextFormField(
           controller: _phoneController,
           keyboardType: TextInputType.phone,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(11)],decoration: const InputDecoration(
+            LengthLimitingTextInputFormatter(11),
+          ],
+          decoration: const InputDecoration(
             labelText: 'Telefon',
             hintText: '5XXXXXXXXX',
-            prefixIcon: Icon(Icons.phone_outlined, color: Color(0xFF64748B)), prefixText: '+90 ',), validator: (value) {
+            prefixIcon: Icon(Icons.phone_outlined, color: Color(0xFF64748B)),
+            prefixText: '+90 ',
+          ),
+          validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Telefon alanı zorunludur';
             }
@@ -297,7 +376,11 @@ class _RegisterScreenState extends State<RegisterScreen>
               return 'Geçerli bir telefon numarası girin';
             }
             return null;
-          },),],);}
+          },
+        ),
+      ],
+    );
+  }
 
   Widget _buildVerificationStep() {
     return Column(
@@ -308,9 +391,16 @@ class _RegisterScreenState extends State<RegisterScreen>
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A)),),const SizedBox(height: 8)Text(
+            color: Color(0xFF0F172A),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
           '${_phoneController.text.isNotEmpty ? "+90 ${_phoneController.text}" : _emailController.text} adresine gönderilen 6 haneli kodu girin',
-          style: const TextStyle(fontSize: 16, color: Color(0xFF64748B)),),const SizedBox(height: 32)// Verification Code
+          style: const TextStyle(fontSize: 16, color: Color(0xFF64748B)),
+        ),
+        const SizedBox(height: 32),
+        // Verification Code
         TextFormField(
           controller: _verificationCodeController,
           keyboardType: TextInputType.number,
@@ -319,27 +409,45 @@ class _RegisterScreenState extends State<RegisterScreen>
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            letterSpacing: 8,), decoration: InputDecoration(
+            letterSpacing: 8,
+          ),
+          decoration: InputDecoration(
             labelText: 'Doğrulama Kodu',
             hintText: '000000',
             counterText: '',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),), validator: (value) {
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          validator: (value) {
             if (value == null || value.length != 6) {
               return '6 haneli kodu girin';
             }
             return null;
-          },),const SizedBox(height: 24)// Resend Code
+          },
+        ),
+        const SizedBox(height: 24),
+        // Resend Code
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               'Kod gelmedi mi?',
-              style: TextStyle(color: Color(0xFF64748B)),),TextButton(
+              style: TextStyle(color: Color(0xFF64748B)),
+            ),
+            TextButton(
               onPressed: _isLoading ? null : _sendVerificationCode,
               child: Text(
                 'Tekrar Gönder',
                 style: TextStyle(
-                  color: _isLoading ? Colors.grey : const Color(0xFF003875) fontWeight: FontWeight.w600,),),),],),],);}
+                  color: _isLoading ? Colors.grey : const Color(0xFF003875),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget _buildPasswordStep() {
     return Column(
@@ -350,16 +458,25 @@ class _RegisterScreenState extends State<RegisterScreen>
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A)),),const SizedBox(height: 8)const Text(
+            color: Color(0xFF0F172A),
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
           'Güçlü bir şifre belirleyin',
-          style: TextStyle(fontSize: 16, color: Color(0xFF64748B)),),const SizedBox(height: 32)// Password
+          style: TextStyle(fontSize: 16, color: Color(0xFF64748B)),
+        ),
+        const SizedBox(height: 32),
+        // Password
         TextFormField(
           controller: _passwordController,
           obscureText: true,
           decoration: const InputDecoration(
             labelText: 'Şifre',
             hintText: 'En az 8 karakter',
-            prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF64748B)),), validator: (value) {
+            prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF64748B)),
+          ),
+          validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Şifre alanı zorunludur';
             }
@@ -367,14 +484,19 @@ class _RegisterScreenState extends State<RegisterScreen>
               return 'Şifre en az 8 karakter olmalı';
             }
             return null;
-          },),const SizedBox(height: 16)// Confirm Password
+          },
+        ),
+        const SizedBox(height: 16),
+        // Confirm Password
         TextFormField(
           controller: _confirmPasswordController,
           obscureText: true,
           decoration: const InputDecoration(
             labelText: 'Şifre Tekrar',
             hintText: 'Şifrenizi tekrar girin',
-            prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF64748B)),), validator: (value) {
+            prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF64748B)),
+          ),
+          validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Şifre tekrarı zorunludur';
             }
@@ -382,10 +504,18 @@ class _RegisterScreenState extends State<RegisterScreen>
               return 'Şifreler eşleşmiyor';
             }
             return null;
-          },),const SizedBox(height: 24)// Terms and Conditions
+          },
+        ),
+        const SizedBox(height: 24),
+        // Terms and Conditions
         Container(
-          padding: const EdgeInsets.all(16) decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC) borderRadius: BorderRadius.circular(12) border: Border.all(color: const Color(0xFFE2E8F0)),), child: Column(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Column(
             children: [
               Row(
                 children: [
@@ -394,7 +524,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                     onChanged: (value) {
                       setState(() => _acceptTerms = value ?? false);
                     },
-                    activeColor: const Color(0xFF003875)),Expanded(
+                    activeColor: const Color(0xFF003875),
+                  ),
+                  Expanded(
                     child: GestureDetector(
                       onTap: () {
                         // TODO: Show terms and conditions
@@ -402,17 +534,38 @@ class _RegisterScreenState extends State<RegisterScreen>
                       child: const Text(
                         'Kullanım Şartları ve Gizlilik Politikasını kabul ediyorum',
                         style: TextStyle(
-                          color: Color(0xFF0F172A) fontSize: 14,),),),),],),const SizedBox(height: 8)Row(
+                          color: Color(0xFF0F172A),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
                 children: [
                   Checkbox(
                     value: _acceptMarketing,
                     onChanged: (value) {
                       setState(() => _acceptMarketing = value ?? false);
                     },
-                    activeColor: const Color(0xFF003875)),const Expanded(
+                    activeColor: const Color(0xFF003875),
+                  ),
+                  const Expanded(
                     child: Text(
                       'Kampanya ve duyurular için iletişimime izin veriyorum (İsteğe bağlı)',
-                      style: TextStyle(color: Color(0xFF64748B) fontSize: 14)),),],),],),),],);}
+                      style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildNavigationButtons() {
     return Column(
@@ -423,34 +576,51 @@ class _RegisterScreenState extends State<RegisterScreen>
           child: ElevatedButton(
             onPressed: _isLoading
                 ? null
-                : (_currentStep == 2 ? _handleRegister : _nextStep) style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF003875) foregroundColor: Colors.white,
+                : (_currentStep == 2 ? _handleRegister : _nextStep),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF003875),
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)), elevation: 0,), child: _isLoading
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+            child: _isLoading
                 ? const SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
                 : Text(
                     _currentStep == 2 ? 'Kayıt Ol' : 'Devam Et',
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,),),),),if (_currentStep > 0) ...[
-          const SizedBox(height: 12)SizedBox(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          ),
+        ),
+        if (_currentStep > 0) ...[
+          const SizedBox(height: 12),
+          SizedBox(
             height: 48,
             child: TextButton(
               onPressed: _previousStep,
               child: const Text(
                 'Geri Dön',
                 style: TextStyle(
-                  color: Color(0xFF003875) fontSize: 16,
-                  fontWeight: FontWeight.w500,),),),),],],);}
+                  color: Color(0xFF003875),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
 }
-
-
-
-
-
-
