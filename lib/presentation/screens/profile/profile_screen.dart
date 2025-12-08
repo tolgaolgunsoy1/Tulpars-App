@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:tulpars_app/core/constants/app_constants.dart';
+
+import '../../../core/constants/app_constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -45,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
@@ -177,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.primaryColor).withOpacity(0.3),
+            color: const Color(AppConstants.primaryColor).withValues(alpha: 77),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -214,14 +214,14 @@ class _ProfileScreenState extends State<ProfileScreen>
             _userData['email'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 204),
             ),
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 51),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -445,7 +445,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 26),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 20),
@@ -511,6 +511,8 @@ class _ProfileScreenState extends State<ProfileScreen>
               // TODO: Navigate to about screen
             },
           ),
+          const Divider(height: 1),
+          _buildLogoutButton(),
         ],
       ),
     );

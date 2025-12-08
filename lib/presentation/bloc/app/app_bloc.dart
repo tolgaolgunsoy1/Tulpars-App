@@ -8,7 +8,6 @@ part 'app_event.dart';
 part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-
   AppBloc() : super(AppInitial()) {
     on<AppStarted>(_onAppStarted);
     on<AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
@@ -32,7 +31,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       final settingsBox = await Hive.openBox('settings');
       final onboardingCompleted = settingsBox.get(
         'onboarding_completed',
-        defaultValue: false,);if (!onboardingCompleted) {
+        defaultValue: false,
+      );
+
+      if (!onboardingCompleted) {
         emit(OnboardingRequired());
         return;
       }
@@ -50,7 +52,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _onAuthenticationStatusChanged(
     AuthenticationStatusChanged event,
-    Emitter<AppState> emit,) {
+    Emitter<AppState> emit,
+  ) {
     if (event.isAuthenticated) {
       emit(AppLoaded());
     } else {
@@ -59,7 +62,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _onSignOutRequested(
-      SignOutRequested event, Emitter<AppState> emit,) async {
+    SignOutRequested event,
+    Emitter<AppState> emit,
+  ) async {
     emit(SignOutInProgress());
     try {
       await _authService.signOut();
@@ -69,7 +74,3 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
   }
 }
-
-
-
-
