@@ -30,6 +30,7 @@ import 'presentation/screens/settings/settings_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/screens/sports/sports_screen.dart';
 import 'presentation/screens/admin/admin_panel_screen.dart';
+import 'presentation/screens/profile/association_profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -167,6 +168,10 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: '/admin',
           builder: (context, state) => const AdminPanelScreen(),
+        ),
+        GoRoute(
+          path: '/association',
+          builder: (context, state) => const AssociationProfileScreen(),
         ),
       ],
     ),
