@@ -13,6 +13,10 @@ class AssociationProfileScreen extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 250,
             pinned: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.go('/main'),
+            ),
             flexibleSpace: FlexibleSpaceBar(
               title: const Text('TULPARS DERNEĞİ'),
               background: Container(

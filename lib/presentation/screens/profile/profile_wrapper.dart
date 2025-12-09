@@ -25,6 +25,10 @@ class ProfileWrapper extends StatelessWidget {
           title: const Text('Profil'),
           backgroundColor: const Color(0xFF003875),
           foregroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.go('/main'),
+          ),
         ),
         body: Center(
           child: Column(
@@ -101,6 +105,10 @@ class _GuestProfileScreen extends StatelessWidget {
         title: const Text('Profil'),
         backgroundColor: const Color(0xFF003875),
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/main'),
+        ),
       ),
       body: Center(
         child: Column(
