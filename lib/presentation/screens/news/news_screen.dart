@@ -295,16 +295,27 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
         onRefresh: _refreshNews,
         child: _filteredNews.isEmpty
             ? _buildEmptyState()
-            : ListView.builder(
+            : CustomScrollView(
                 controller: _scrollController,
-                padding: const EdgeInsets.all(16),
-                itemCount: _filteredNews.length,
-                addAutomaticKeepAlives: true,
-                addRepaintBoundaries: true,
-                itemBuilder: (context, index) {
-                  final news = _filteredNews[index];
-                  return _buildNewsCard(news);
-                },
+                slivers: [
+                  if (_selectedCategory == 'Tümü' && _searchQuery.isEmpty) ..[
+                    SliverToBoxAdapter(
+                      child: _buildTrendingSection(),
+                    ),
+                  ],
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final news = _filteredNews[index];
+                          return _buildNewsCard(news);
+                        },
+                        childCount: _filteredNews.length,
+                      ),
+                    ),
+                  ),
+                ],
               ),
       ),
     );
@@ -625,6 +636,133 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       default:
         return const Color(0xFF64748B);
     }
+  }
+
+  Widget _buildTrendingSection() {
+    final trendingNews = _newsList.take(3).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              Icon(Icons.trending_up, color: Color(0xFFDC2626)),
+              SizedBox(width: 8),
+              Text(
+                'Popüler Haberler',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: trendingNews.length,
+            itemBuilder: (context, index) {
+              final news = trendingNews[index];
+              return _buildTrendingCard(news);
+            },
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            'Tüm Haberler',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTrendingCard(Map<String, dynamic> news) {
+    return Container(
+      width: 280,
+      margin: const EdgeInsets.only(right: 12),
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: InkWell(
+          onTap: () => _openNewsDetail(news),
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  news['image'],
+                  height: 200,
+                  width: 280,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.8),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 12,
+                left: 12,
+                right: 12,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getCategoryColor(news['category']),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        news['category'],
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      news['title'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   String _formatDate(DateTime date) {
