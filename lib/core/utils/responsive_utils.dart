@@ -45,7 +45,9 @@ class ResponsiveUtils {
   static EdgeInsets responsivePadding(BuildContext context) {
     return responsiveValue(
       context: context,
-      mobile: const EdgeInsets.all(16), tablet: const EdgeInsets.all(24), desktop: const EdgeInsets.all(32),
+      mobile: const EdgeInsets.all(16),
+      tablet: const EdgeInsets.all(24),
+      desktop: const EdgeInsets.all(32),
     );
   }
 
@@ -53,7 +55,9 @@ class ResponsiveUtils {
   static EdgeInsets responsiveMargin(BuildContext context) {
     return responsiveValue(
       context: context,
-      mobile: const EdgeInsets.all(8), tablet: const EdgeInsets.all(16), desktop: const EdgeInsets.all(24),
+      mobile: const EdgeInsets.all(8),
+      tablet: const EdgeInsets.all(16),
+      desktop: const EdgeInsets.all(24),
     );
   }
 
@@ -61,9 +65,9 @@ class ResponsiveUtils {
   static double responsiveBorderRadius(BuildContext context) {
     return responsiveValue(
       context: context,
-      mobile: 8.0,
-      tablet: 12.0,
-      desktop: 16.0,
+      mobile: 8,
+      tablet: 12,
+      desktop: 16,
     );
   }
 
@@ -71,9 +75,9 @@ class ResponsiveUtils {
   static double responsiveElevation(BuildContext context) {
     return responsiveValue(
       context: context,
-      mobile: 2.0,
-      tablet: 4.0,
-      desktop: 8.0,
+      mobile: 2,
+      tablet: 4,
+      desktop: 8,
     );
   }
 
@@ -133,4 +137,3 @@ extension ResponsiveExtension on BuildContext {
   double responsiveSpacing(double baseSpacing) =>
       ResponsiveUtils.responsiveSpacing(this, baseSpacing);
 }
-

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tulpars_app/core/constants/app_constants.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_constants.dart';
 
 class MembershipScreen extends StatefulWidget {
   const MembershipScreen({super.key});
@@ -21,7 +22,7 @@ class _MembershipScreenState extends State<MembershipScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
@@ -50,7 +51,7 @@ class _MembershipScreenState extends State<MembershipScreen>
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: FadeTransition(
@@ -93,13 +94,13 @@ class _MembershipScreenState extends State<MembershipScreen>
         gradient: const LinearGradient(
           colors: [
             Color(AppConstants.primaryColor),
-            Color(AppConstants.primaryLightColor)
+            Color(AppConstants.primaryLightColor),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.primaryColor).withOpacity(0.3),
+            color: const Color(AppConstants.primaryColor).withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -133,7 +134,7 @@ class _MembershipScreenState extends State<MembershipScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
@@ -224,7 +225,7 @@ class _MembershipScreenState extends State<MembershipScreen>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(AppConstants.primaryColor).withOpacity(0.1),
+            color: const Color(AppConstants.primaryColor).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -292,7 +293,7 @@ class _MembershipScreenState extends State<MembershipScreen>
                 features: [
                   'Aile katılımı',
                   'Tüm eğitimler',
-                  'Öncelikli hizmet'
+                  'Öncelikli hizmet',
                 ],
                 isPopular: true,
               ),
@@ -337,7 +338,7 @@ class _MembershipScreenState extends State<MembershipScreen>
         borderRadius: BorderRadius.circular(12),
         side: isPopular
             ? const BorderSide(
-                color: Color(AppConstants.primaryColor), width: 2)
+                color: Color(AppConstants.primaryColor), width: 2,)
             : BorderSide.none,
       ),
       child: Padding(
@@ -403,7 +404,7 @@ class _MembershipScreenState extends State<MembershipScreen>
                       ),
                     ],
                   ),
-                )),
+                ),),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
@@ -567,7 +568,7 @@ class _MembershipScreenState extends State<MembershipScreen>
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             child: const Text('Tamam'),
           ),
         ],

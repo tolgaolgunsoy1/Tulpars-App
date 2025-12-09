@@ -10,7 +10,6 @@ abstract class AppEvent extends Equatable {
 class AppStarted extends AppEvent {}
 
 class AuthenticationStatusChanged extends AppEvent {
-
   const AuthenticationStatusChanged(this.isAuthenticated);
   final bool isAuthenticated;
 
@@ -19,6 +18,3 @@ class AuthenticationStatusChanged extends AppEvent {
 }
 
 class SignOutRequested extends AppEvent {}
-
-
-

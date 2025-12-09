@@ -134,12 +134,15 @@ class _LoginScreenState extends State<LoginScreen>
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
+          setState(() => _isLoading = false);
           context.go('/main');
         } else if (state is AuthError) {
+          setState(() => _isLoading = false);
           _showErrorSnackBar(state.message);
         } else if (state is PasswordResetSent) {
           _showSuccessSnackBar(
-              'Şifre sıfırlama bağlantısı ${state.email} adresine gönderildi');
+            'Şifre sıfırlama bağlantısı ${state.email} adresine gönderildi',
+          );
         } else if (state is AuthLoading) {
           setState(() => _isLoading = true);
         } else if (state is Unauthenticated) {
@@ -225,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF003875).withOpacity(0.3),
+                color: const Color(0xFF003875).withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),

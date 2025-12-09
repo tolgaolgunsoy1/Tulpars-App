@@ -157,7 +157,7 @@ class _GalleryScreenState extends State<GalleryScreen>
               },
               backgroundColor: Colors.white,
               selectedColor:
-                  const Color(AppConstants.primaryColor).withOpacity(0.1),
+                  const Color(AppConstants.primaryColor).withValues(alpha: 0.1),
               checkmarkColor: const Color(AppConstants.primaryColor),
               labelStyle: TextStyle(
                 color: isSelected
@@ -207,7 +207,7 @@ class _GalleryScreenState extends State<GalleryScreen>
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -245,7 +245,7 @@ class _GalleryScreenState extends State<GalleryScreen>
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
@@ -273,7 +273,7 @@ class _GalleryScreenState extends State<GalleryScreen>
                       children: [
                         Icon(
                           Icons.location_on,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           size: 12,
                         ),
                         const SizedBox(width: 4),
@@ -281,7 +281,7 @@ class _GalleryScreenState extends State<GalleryScreen>
                           child: Text(
                             item['location'],
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                               fontSize: 10,
                             ),
                             maxLines: 1,
@@ -301,7 +301,7 @@ class _GalleryScreenState extends State<GalleryScreen>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getCategoryColor(item['category']).withOpacity(0.9),
+                    color: _getCategoryColor(item['category']).withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -423,7 +423,7 @@ class _GalleryScreenState extends State<GalleryScreen>
                             ),
                             decoration: BoxDecoration(
                               color: _getCategoryColor(item['category'])
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(

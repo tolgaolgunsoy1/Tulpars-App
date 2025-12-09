@@ -26,7 +26,7 @@ void main() {
       build: () => appBloc,
       setUp: () {
         when(() => mockSettingsBox.get('onboarding_completed',
-            defaultValue: false)).thenReturn(false);
+            defaultValue: false,),).thenReturn(false);
       },
       act: (bloc) => bloc.add(AppStarted()),
       expect: () => [AppLoading(), OnboardingRequired()],
@@ -37,7 +37,7 @@ void main() {
       build: () => appBloc,
       setUp: () {
         when(() => mockSettingsBox.get('onboarding_completed',
-            defaultValue: false)).thenReturn(true);
+            defaultValue: false,),).thenReturn(true);
       },
       act: (bloc) => bloc.add(AppStarted()),
       expect: () => [AppLoading(), AuthenticationRequired()],
@@ -48,7 +48,7 @@ void main() {
       build: () => appBloc,
       setUp: () {
         when(() => mockSettingsBox.get('onboarding_completed',
-            defaultValue: false)).thenReturn(true);
+            defaultValue: false,),).thenReturn(true);
         // Mock authentication check - assume user is authenticated
       },
       act: (bloc) => bloc.add(AppStarted()),

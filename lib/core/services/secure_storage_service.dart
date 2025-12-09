@@ -1,9 +1,9 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Service for secure storage of sensitive data
 class SecureStorageService {
-  static final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
   // Keys for different types of data
   static const String _authTokenKey = 'auth_token';
@@ -21,7 +21,7 @@ class SecureStorageService {
 
   /// Get authentication token
   Future<String?> getAuthToken() async {
-    return await _storage.read(key: _authTokenKey);
+    return _storage.read(key: _authTokenKey);
   }
 
   /// Save refresh token
@@ -31,7 +31,7 @@ class SecureStorageService {
 
   /// Get refresh token
   Future<String?> getRefreshToken() async {
-    return await _storage.read(key: _refreshTokenKey);
+    return _storage.read(key: _refreshTokenKey);
   }
 
   /// Save user ID
@@ -41,7 +41,7 @@ class SecureStorageService {
 
   /// Get user ID
   Future<String?> getUserId() async {
-    return await _storage.read(key: _userIdKey);
+    return _storage.read(key: _userIdKey);
   }
 
   /// Save user profile data
@@ -80,7 +80,7 @@ class SecureStorageService {
 
   /// Get theme mode preference
   Future<String?> getThemeMode() async {
-    return await _storage.read(key: _themeModeKey);
+    return _storage.read(key: _themeModeKey);
   }
 
   /// Save language preference
@@ -90,7 +90,7 @@ class SecureStorageService {
 
   /// Get language preference
   Future<String?> getLanguage() async {
-    return await _storage.read(key: _languageKey);
+    return _storage.read(key: _languageKey);
   }
 
   /// Save custom key-value pair
@@ -100,7 +100,7 @@ class SecureStorageService {
 
   /// Get custom data by key
   Future<String?> getCustomData(String key) async {
-    return await _storage.read(key: key);
+    return _storage.read(key: key);
   }
 
   /// Delete specific data
@@ -122,7 +122,7 @@ class SecureStorageService {
 
   /// Check if data exists for a key
   Future<bool> containsKey(String key) async {
-    return await _storage.containsKey(key: key);
+    return _storage.containsKey(key: key);
   }
 
   /// Get all stored keys (for debugging)
@@ -151,7 +151,6 @@ class SecureStorageService {
   /// Decrypt and get sensitive data
   Future<String?> getEncryptedData(String key) async {
     // In a real implementation, you would decrypt the data here
-    return await _storage.read(key: key);
+    return _storage.read(key: key);
   }
 }
-

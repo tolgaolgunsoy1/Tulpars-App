@@ -93,22 +93,22 @@ class _SplashScreenState extends State<SplashScreen>
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.shield,
-                          size: 60,
-                          color: Color(AppConstants.primaryColor),
+                        child: Image.asset(
+                          'assets/images/appstore.png',
+                          width: 60,
+                          height: 60,
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Text(
+                      const Text(
                         AppConstants.appName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -119,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen>
                         'Sivil Savunma • Arama Kurtarma',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                         textAlign: TextAlign.center,
                       ),

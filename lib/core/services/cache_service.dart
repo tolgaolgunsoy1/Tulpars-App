@@ -19,7 +19,9 @@ class CacheService {
     final expiryTime = DateTime.now().add(duration ?? _defaultCacheDuration);
     final cacheData = {
       'value': value,
-      'expiry': expiryTime.toIso8601String(),};await _cacheBox.put(key, jsonEncode(cacheData));
+      'expiry': expiryTime.toIso8601String(),
+    };
+    await _cacheBox.put(key, jsonEncode(cacheData));
   }
 
   T? get<T>(String key) {
@@ -57,7 +59,9 @@ class CacheService {
   Future<void> cacheImage(String url, List<int> bytes) async {
     final cacheData = {
       'bytes': bytes,
-      'timestamp': DateTime.now().toIso8601String(),};await _imageCacheBox.put(url, jsonEncode(cacheData));
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+    await _imageCacheBox.put(url, jsonEncode(cacheData));
   }
 
   List<int>? getCachedImage(String url) {
@@ -127,7 +131,3 @@ class CacheService {
     await _imageCacheBox.deleteAll(imageKeysToDelete);
   }
 }
-
-
-
-

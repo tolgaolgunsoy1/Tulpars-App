@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tulpars_app/main.dart';
 import 'package:tulpars_app/core/services/auth_service.dart';
+import 'package:tulpars_app/main.dart';
 
 void main() {
   testWidgets('App starts without crashing', (WidgetTester tester) async {

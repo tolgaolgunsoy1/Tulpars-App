@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 
 class EducationScreen extends StatefulWidget {
@@ -177,7 +178,7 @@ class _EducationScreenState extends State<EducationScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.primaryColor).withOpacity(0.3),
+            color: const Color(AppConstants.primaryColor).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -207,7 +208,7 @@ class _EducationScreenState extends State<EducationScreen>
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.4,
             ),
           ),
@@ -246,7 +247,7 @@ class _EducationScreenState extends State<EducationScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -262,7 +263,7 @@ class _EducationScreenState extends State<EducationScreen>
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: program['color'].withOpacity(0.1),
+                  color: program['color'].withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -346,10 +347,10 @@ class _EducationScreenState extends State<EducationScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(AppConstants.accentColor).withOpacity(0.1),
+              color: const Color(AppConstants.accentColor).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(AppConstants.accentColor).withOpacity(0.2),
+                color: const Color(AppConstants.accentColor).withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -391,7 +392,7 @@ class _EducationScreenState extends State<EducationScreen>
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: program['color'].withOpacity(0.1),
+                  color: program['color'].withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -506,7 +507,7 @@ class _EducationScreenState extends State<EducationScreen>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -518,10 +519,10 @@ class _EducationScreenState extends State<EducationScreen>
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: cert['color'].withOpacity(0.1),
+                  color: cert['color'].withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: cert['color'].withOpacity(0.2),
+                    color: cert['color'].withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
@@ -584,7 +585,7 @@ class _EducationScreenState extends State<EducationScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.successColor).withOpacity(0.3),
+            color: const Color(AppConstants.successColor).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -688,12 +689,12 @@ class _EducationScreenState extends State<EducationScreen>
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             child: const Text('İptal'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              context.pop();
               _showSnackBar(
                 '${program['title']} eğitimine kayıt başvurunuz alındı',
               );

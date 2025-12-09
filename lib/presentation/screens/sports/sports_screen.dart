@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 
 class SportsScreen extends StatefulWidget {
@@ -145,7 +146,7 @@ class _SportsScreenState extends State<SportsScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.primaryColor).withOpacity(0.3),
+            color: const Color(AppConstants.primaryColor).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -175,7 +176,7 @@ class _SportsScreenState extends State<SportsScreen>
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.4,
             ),
           ),
@@ -211,7 +212,7 @@ class _SportsScreenState extends State<SportsScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -227,7 +228,7 @@ class _SportsScreenState extends State<SportsScreen>
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: activity['color'].withOpacity(0.1),
+                  color: activity['color'].withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -286,10 +287,10 @@ class _SportsScreenState extends State<SportsScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(AppConstants.accentColor).withOpacity(0.1),
+              color: const Color(AppConstants.accentColor).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(AppConstants.accentColor).withOpacity(0.2),
+                color: const Color(AppConstants.accentColor).withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -388,7 +389,7 @@ class _SportsScreenState extends State<SportsScreen>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -400,10 +401,10 @@ class _SportsScreenState extends State<SportsScreen>
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: achievement['color'].withOpacity(0.1),
+                  color: achievement['color'].withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: achievement['color'].withOpacity(0.2),
+                    color: achievement['color'].withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
@@ -466,7 +467,7 @@ class _SportsScreenState extends State<SportsScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.successColor).withOpacity(0.3),
+            color: const Color(AppConstants.successColor).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -571,12 +572,12 @@ class _SportsScreenState extends State<SportsScreen>
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             child: const Text('İptal'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              context.pop();
               _showSnackBar(
                 '${activity['title']} aktivitesine katılım başvurunuz alındı',
               );

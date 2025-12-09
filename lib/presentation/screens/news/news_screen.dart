@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/constants/app_constants.dart';
@@ -232,6 +233,10 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       appBar: AppBar(
         backgroundColor: const Color(0xFF003875),
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.go('/main'),
+        ),
         title: _isSearching
             ? TextField(
                 controller: _searchController,

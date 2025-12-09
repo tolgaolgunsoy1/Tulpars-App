@@ -42,6 +42,7 @@
         "injectable",
         "intl",
         "local_auth",
+        "logging",
         "mobile_scanner",
         "permission_handler",
         "photo_view",
@@ -317,6 +318,11 @@
         "meta",
         "synchronized"
       ]
+    },
+    {
+      "name": "logging",
+      "version": "1.3.0",
+      "dependencies": []
     },
     {
       "name": "mobile_scanner",
@@ -720,11 +726,6 @@
         "args",
         "meta"
       ]
-    },
-    {
-      "name": "logging",
-      "version": "1.3.0",
-      "dependencies": []
     },
     {
       "name": "html",

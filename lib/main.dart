@@ -21,10 +21,12 @@ import 'presentation/screens/emergency/emergency_screen.dart';
 import 'presentation/screens/gallery/gallery_screen.dart';
 import 'presentation/screens/home/home_screen.dart';
 import 'presentation/screens/membership/membership_screen.dart';
+import 'presentation/screens/news/news_screen.dart';
 import 'presentation/screens/notifications/notifications_screen.dart';
 import 'presentation/screens/onboarding/onboarding_screen.dart';
 import 'presentation/screens/operations/operations_screen.dart';
 import 'presentation/screens/profile/profile_screen.dart';
+import 'presentation/screens/settings/settings_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/screens/sports/sports_screen.dart';
 
@@ -60,9 +62,9 @@ void main() async {
 }
 
 class TulparsApp extends StatelessWidget {
-  final AuthService authService;
-
   const TulparsApp({super.key, required this.authService});
+
+  final AuthService authService;
 
   @override
   Widget build(BuildContext context) {
@@ -92,52 +94,75 @@ class TulparsApp extends StatelessWidget {
 
 final GoRouter _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
-    GoRoute(
-      path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),
+    ShellRoute(
+      builder: (context, state, child) {
+        return HomeScreen(child: child);
+      },
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/onboarding',
+          builder: (context, state) => const OnboardingScreen(),
+        ),
+        GoRoute(
+          path: '/auth',
+          builder: (context, state) => const AuthScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/register',
+          builder: (context, state) => const RegisterScreen(),
+        ),
+        GoRoute(path: '/main', builder: (context, state) => const SizedBox()),
+        GoRoute(
+          path: '/emergency',
+          builder: (context, state) => const EmergencyScreen(),
+        ),
+        GoRoute(
+          path: '/donations',
+          builder: (context, state) => const DonationsScreen(),
+        ),
+        GoRoute(
+          path: '/membership',
+          builder: (context, state) => const MembershipScreen(),
+        ),
+        GoRoute(
+          path: '/profile',
+          builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: '/sports',
+          builder: (context, state) => const SportsScreen(),
+        ),
+        GoRoute(
+          path: '/education',
+          builder: (context, state) => const EducationScreen(),
+        ),
+        GoRoute(
+          path: '/gallery',
+          builder: (context, state) => const GalleryScreen(),
+        ),
+        GoRoute(
+          path: '/operations',
+          builder: (context, state) => const OperationsScreen(),
+        ),
+        GoRoute(
+          path: '/notifications',
+          builder: (context, state) => const NotificationsScreen(),
+        ),
+        GoRoute(path: '/news', builder: (context, state) => const NewsScreen()),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const SettingsScreen(),
+        ),
+      ],
     ),
-    GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
-    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-    GoRoute(
-      path: '/register',
-      builder: (context, state) => const RegisterScreen(),
-    ),
-    GoRoute(path: '/main', builder: (context, state) => const HomeScreen()),
-    GoRoute(
-      path: '/emergency',
-      builder: (context, state) => const EmergencyScreen(),
-    ),
-    GoRoute(
-      path: '/donations',
-      builder: (context, state) => const DonationsScreen(),
-    ),
-    GoRoute(
-      path: '/membership',
-      builder: (context, state) => const MembershipScreen(),
-    ),
-    GoRoute(
-      path: '/profile',
-      builder: (context, state) => const ProfileScreen(),
-    ),
-    GoRoute(path: '/sports', builder: (context, state) => const SportsScreen()),
-    GoRoute(
-      path: '/education',
-      builder: (context, state) => const EducationScreen(),
-    ),
-    GoRoute(
-      path: '/gallery',
-      builder: (context, state) => const GalleryScreen(),
-    ),
-    GoRoute(
-      path: '/operations',
-      builder: (context, state) => const OperationsScreen(),
-    ),
-    GoRoute(
-      path: '/notifications',
-      builder: (context, state) => const NotificationsScreen(),
-    ),
-    // Add more routes here as screens are implemented
   ],
   initialLocation: '/',
 );

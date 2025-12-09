@@ -50,8 +50,7 @@ class AuthService {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null;
 
-      final googleAuth =
-          await googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -159,7 +158,8 @@ class AuthService {
         return Exception('Bu işlem için tekrar giriş yapmanız gerekiyor.');
       case 'too-many-requests':
         return Exception(
-            'Çok fazla başarısız giriş denemesi. Lütfen daha sonra tekrar deneyin.',);
+          'Çok fazla başarısız giriş denemesi. Lütfen daha sonra tekrar deneyin.',
+        );
       default:
         return Exception('Bir hata oluştu: ${e.message}');
     }
@@ -178,5 +178,3 @@ class AuthService {
     await _auth.currentUser?.reload();
   }
 }
-
-

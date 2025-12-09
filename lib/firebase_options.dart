@@ -22,10 +22,13 @@ class DefaultFirebaseOptions {
         return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.');default:
+            'DefaultFirebaseOptions have not been configured for linux - '
+            'you can reconfigure this by running the FlutterFire CLI again.');
+      default:
         throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',);}
+          'DefaultFirebaseOptions are not supported for this platform.',
+        );
+    }
   }
 
   static const FirebaseOptions web = FirebaseOptions(
@@ -35,28 +38,34 @@ class DefaultFirebaseOptions {
     projectId: 'your-project-id',
     authDomain: 'your-project-id.firebaseapp.com',
     storageBucket: 'your-project-id.appspot.com',
-    measurementId: 'your-measurement-id',);static const FirebaseOptions android = FirebaseOptions(
+    measurementId: 'your-measurement-id',
+  );
+  static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'your-android-api-key',
     appId: 'your-android-app-id',
     messagingSenderId: 'your-sender-id',
     projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',);static const FirebaseOptions ios = FirebaseOptions(
+    storageBucket: 'your-project-id.appspot.com',
+  );
+  static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'your-ios-api-key',
     appId: 'your-ios-app-id',
     messagingSenderId: 'your-sender-id',
     projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',);static const FirebaseOptions macos = FirebaseOptions(
+    storageBucket: 'your-project-id.appspot.com',
+  );
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'your-macos-api-key',
     appId: 'your-macos-app-id',
     messagingSenderId: 'your-sender-id',
     projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',);static const FirebaseOptions windows = FirebaseOptions(
+    storageBucket: 'your-project-id.appspot.com',
+  );
+  static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'your-windows-api-key',
     appId: 'your-windows-app-id',
     messagingSenderId: 'your-sender-id',
     projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',);}
-
-
-
-
+    storageBucket: 'your-project-id.appspot.com',
+  );
+}

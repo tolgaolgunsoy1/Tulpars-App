@@ -1,11 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logging/logging.dart';
 import '../constants/app_constants.dart';
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
+  final Logger _logger = Logger('NotificationService');
 
   bool _isInitialized = false;
 
@@ -131,8 +133,8 @@ class NotificationService {
       }
     }
 
-    const androidDetails = AndroidNotificationDetails(
-      'general_channel',
+    final androidDetails = AndroidNotificationDetails(
+      channelId,
       'Genel',
       channelDescription: 'Genel bildirimler',
       importance: Importance.max,
@@ -143,7 +145,7 @@ class NotificationService {
       presentBadge: true,
       presentSound: true,
     );
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
@@ -163,8 +165,8 @@ class NotificationService {
 
   void _handleNotificationTapFromPayload(String payload) {
     // This would typically navigate to specific screens
-    // For now, we'll just print the payload
-    print('Notification tapped with payload: $payload');
+    // For now, we'll just log the payload
+    _logger.info('Notification tapped with payload: $payload');
   }
 
   // Get FCM token
@@ -226,8 +228,7 @@ class NotificationService {
 
 // Background message handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling background message: ${message.messageId}');
+  Logger('BackgroundHandler')
+      .info('Handling background message: ${message.messageId}');
   // Handle background messages here
 }
-
-

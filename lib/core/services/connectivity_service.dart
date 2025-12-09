@@ -20,7 +20,9 @@ class ConnectivityService {
 
     // Listen for connectivity changes
     _subscription = _connectivity.onConnectivityChanged.listen(
-      _updateConnectionStatus,);}
+      _updateConnectionStatus,
+    );
+  }
 
   void _updateConnectionStatus(List<ConnectivityResult> results) {
     final wasConnected = _isConnected;
@@ -48,7 +50,3 @@ class ConnectivityService {
     _connectionController.close();
   }
 }
-
-
-
-

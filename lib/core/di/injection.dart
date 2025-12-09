@@ -10,10 +10,10 @@ final getIt = GetIt.instance;
 
 void configureDependencies() {
   // Register services as singletons
-  getIt.registerLazySingleton<AuthService>(() => AuthService());
-  getIt.registerLazySingleton<CacheService>(() => CacheService());
-  getIt.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
-  getIt.registerLazySingleton<NotificationService>(() => NotificationService());
-  getIt.registerLazySingleton<SecureStorageService>(
-      () => SecureStorageService());
+  getIt
+    ..registerLazySingleton<AuthService>(AuthService.new)
+    ..registerLazySingleton<CacheService>(CacheService.new)
+    ..registerLazySingleton<ConnectivityService>(ConnectivityService.new)
+    ..registerLazySingleton<NotificationService>(NotificationService.new)
+    ..registerLazySingleton<SecureStorageService>(SecureStorageService.new);
 }

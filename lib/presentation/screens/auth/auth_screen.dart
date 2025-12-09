@@ -108,7 +108,11 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ],
           ),
-          child: const Icon(Icons.emergency, size: 50, color: Colors.white),
+          child: Image.asset(
+            'assets/images/appstore.png',
+            width: 50,
+            height: 50,
+          ),
         ),
         const SizedBox(height: 16),
         const Text(

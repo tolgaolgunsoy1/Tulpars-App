@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:tulpars_app/core/constants/app_constants.dart';
+import '../../../core/constants/app_constants.dart';
 
 class EmergencyScreen extends StatefulWidget {
   const EmergencyScreen({super.key});
@@ -23,7 +23,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
@@ -37,7 +37,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
   }
 
   Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    final phoneUri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(phoneUri)) {
       await launchUrl(phoneUri);
     } else {
@@ -72,7 +72,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
       ),
       body: FadeTransition(
@@ -123,7 +123,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFDC2626).withOpacity(0.3),
+            color: const Color(0xFFDC2626).withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -153,7 +153,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -221,7 +221,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
                 icon: Icons.info_outline,
                 label: 'Acil\nRehberi',
                 color: const Color(0xFFF59E0B),
-                onTap: () => _showEmergencyGuide(),
+                onTap: _showEmergencyGuide,
               ),
             ),
             const SizedBox(width: 12),
@@ -230,7 +230,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
                 icon: Icons.location_on,
                 label: 'En Yakın\nMerkez',
                 color: const Color(0xFF10B981),
-                onTap: () => _showNearestCenter(),
+                onTap: _showNearestCenter,
               ),
             ),
           ],
@@ -255,7 +255,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -295,10 +295,10 @@ class _EmergencyScreenState extends State<EmergencyScreen>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -377,7 +377,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF003875).withOpacity(0.1),
+                color: const Color(0xFF003875).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: const Color(0xFF003875), size: 24),

@@ -77,7 +77,9 @@ class AppConstants {
     'jpg',
     'jpeg',
     'png',
-    'gif',];static const List<String> allowedVideoExtensions = ['mp4', 'mov', 'avi'];
+    'gif',
+  ];
+  static const List<String> allowedVideoExtensions = ['mp4', 'mov', 'avi'];
 
   // Location
   static const double defaultLatitude = 39.9208; // Kayseri, Turkey
@@ -91,7 +93,3 @@ class AppConstants {
   static const String eventsChannelId = 'events';
   static const String generalChannelId = 'general';
 }
-
-
-
-

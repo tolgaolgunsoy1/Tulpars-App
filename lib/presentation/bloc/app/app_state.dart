@@ -22,7 +22,6 @@ class AuthenticationInProgress extends AppState {}
 class SignOutInProgress extends AppState {}
 
 class AppError extends AppState {
-
   const AppError(this.message, {this.title});
   final String message;
   final String? title;
@@ -32,13 +31,9 @@ class AppError extends AppState {
 }
 
 class AuthenticationError extends AppState {
-
   const AuthenticationError(this.message);
   final String message;
 
   @override
   List<Object> get props => [message];
 }
-
-
-

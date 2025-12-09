@@ -16,26 +16,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   // Onboarding sayfaları
   final List<OnboardingPage> _pages = [
-    OnboardingPage(
+    const OnboardingPage(
       title: 'Tulpars\'a Hoş Geldiniz',
       description:
           'Sivil savunma, arama-kurtarma ve sosyal dayanışma için buradayız. Acil durumlarda topluma hizmet etmek için eğitimli gönüllülerimizle çalışıyoruz.',
       icon: Icons.emergency,
-      color: const Color(AppConstants.primaryColor),
+      color: Color(AppConstants.primaryColor),
     ),
-    OnboardingPage(
+    const OnboardingPage(
       title: 'Birlikte Daha Güçlüyüz',
       description:
           'Eğitimler, spor faaliyetleri, operasyonlar ve sosyal sorumluluk projeleri ile topluma değer katıyoruz.',
       icon: Icons.group,
-      color: const Color(AppConstants.primaryLightColor),
+      color: Color(AppConstants.primaryLightColor),
     ),
-    OnboardingPage(
+    const OnboardingPage(
       title: 'Siz de Aramıza Katılın',
       description:
           'Gönüllü ol, bağış yap veya etkinliklerimizi takip et. Her katkı değerlidir ve fark yaratır.',
       icon: Icons.volunteer_activism,
-      color: const Color(AppConstants.accentColor),
+      color: Color(AppConstants.accentColor),
     ),
   ];
 
@@ -189,7 +189,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             width: 200,
             height: 200,
             decoration: BoxDecoration(
-              color: page.color.withOpacity(0.1),
+              color: page.color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(page.icon, size: 100, color: page.color),
