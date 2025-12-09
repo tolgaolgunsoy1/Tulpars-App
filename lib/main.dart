@@ -29,6 +29,7 @@ import 'presentation/screens/profile/profile_screen.dart';
 import 'presentation/screens/settings/settings_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/screens/sports/sports_screen.dart';
+import 'presentation/screens/admin/admin_panel_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,31 +95,33 @@ class TulparsApp extends StatelessWidget {
 
 final GoRouter _router = GoRouter(
   routes: [
+    // Auth routes - NO bottom navigation
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: '/auth',
+      builder: (context, state) => const AuthScreen(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
+    ),
+    // Main app routes - WITH bottom navigation
     ShellRoute(
       builder: (context, state, child) {
         return HomeScreen(child: child);
       },
       routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const SplashScreen(),
-        ),
-        GoRoute(
-          path: '/onboarding',
-          builder: (context, state) => const OnboardingScreen(),
-        ),
-        GoRoute(
-          path: '/auth',
-          builder: (context, state) => const AuthScreen(),
-        ),
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => const LoginScreen(),
-        ),
-        GoRoute(
-          path: '/register',
-          builder: (context, state) => const RegisterScreen(),
-        ),
         GoRoute(path: '/main', builder: (context, state) => const SizedBox()),
         GoRoute(
           path: '/emergency',
@@ -160,6 +163,10 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: '/settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: '/admin',
+          builder: (context, state) => const AdminPanelScreen(),
         ),
       ],
     ),
