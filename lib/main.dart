@@ -25,7 +25,7 @@ import 'presentation/screens/news/news_screen.dart';
 import 'presentation/screens/notifications/notifications_screen.dart';
 import 'presentation/screens/onboarding/onboarding_screen.dart';
 import 'presentation/screens/operations/operations_screen.dart';
-import 'presentation/screens/profile/profile_screen.dart';
+import 'presentation/screens/profile/profile_wrapper.dart';
 import 'presentation/screens/settings/settings_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/screens/sports/sports_screen.dart';
@@ -138,7 +138,7 @@ final GoRouter _router = GoRouter(
         ),
         GoRoute(
           path: '/profile',
-          builder: (context, state) => const ProfileScreen(),
+          builder: (context, state) => const ProfileWrapper(),
         ),
         GoRoute(
           path: '/sports',
