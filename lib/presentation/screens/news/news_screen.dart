@@ -298,11 +298,10 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
             : CustomScrollView(
                 controller: _scrollController,
                 slivers: [
-                  if (_selectedCategory == 'Tümü' && _searchQuery.isEmpty) ..[
+                  if (_selectedCategory == 'Tümü' && _searchQuery.isEmpty)
                     SliverToBoxAdapter(
                       child: _buildTrendingSection(),
                     ),
-                  ],
                   SliverPadding(
                     padding: const EdgeInsets.all(16),
                     sliver: SliverList(
