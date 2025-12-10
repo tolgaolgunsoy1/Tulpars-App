@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import '../../../core/services/navigation_service.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -20,8 +20,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _handleGuestMode() {
-    // Navigate to main screen as guest
-    context.go('/main');
+    NavigationService.goToMain(context);
   }
 
   @override
@@ -58,14 +57,14 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Column(
                     children: [
                       // Login Button
-                      _buildAuthButton('Giriş Yap', () => context.go('/login')),
+                      _buildAuthButton('Giriş Yap', () => NavigationService.goToLogin(context)),
 
                       const SizedBox(height: 16),
 
                       // Register Button
                       _buildAuthButton(
                         'Kayıt Ol',
-                        () => context.go('/register'),
+                        () => NavigationService.goToRegister(context),
                         isOutlined: true,
                       ),
                     ],

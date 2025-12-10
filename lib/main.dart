@@ -177,4 +177,62 @@ final GoRouter _router = GoRouter(
     ),
   ],
   initialLocation: '/',
+  errorBuilder: (context, state) => Scaffold(
+    appBar: AppBar(
+      title: const Text('Sayfa Bulunamadı'),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/main');
+          }
+        },
+      ),
+    ),
+    body: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text(
+            'Sayfa Bulunamadı',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Aradığınız sayfa mevcut değil.',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
+    ),
+  ),
+  redirect: (context, state) {
+    // Handle deep links and navigation logic
+    final location = state.uri.toString();
+    
+    // If trying to access main app routes without proper navigation
+    if (location.startsWith('/main') || 
+        location.startsWith('/emergency') ||
+        location.startsWith('/donations') ||
+        location.startsWith('/membership') ||
+        location.startsWith('/profile') ||
+        location.startsWith('/sports') ||
+        location.startsWith('/education') ||
+        location.startsWith('/gallery') ||
+        location.startsWith('/operations') ||
+        location.startsWith('/notifications') ||
+        location.startsWith('/news') ||
+        location.startsWith('/settings') ||
+        location.startsWith('/admin') ||
+        location.startsWith('/association')) {
+      // Allow access to main app routes
+      return null;
+    }
+    
+    return null;
+  },
 );

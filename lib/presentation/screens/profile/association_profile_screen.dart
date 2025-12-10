@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/services/navigation_service.dart';
 
 class AssociationProfileScreen extends StatelessWidget {
   const AssociationProfileScreen({super.key});
@@ -15,7 +16,7 @@ class AssociationProfileScreen extends StatelessWidget {
             pinned: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.go('/main'),
+              onPressed: () => NavigationService.goBack(context, fallbackRoute: '/profile'),
             ),
             flexibleSpace: FlexibleSpaceBar(
               title: const Text('TULPARS DERNEĞİ'),
@@ -259,42 +260,41 @@ class AssociationProfileScreen extends StatelessWidget {
               itemCount: team.length,
               itemBuilder: (context, index) {
                 final member = team[index];
-                return Card(
+                return Container(
+                  width: 120,
                   margin: const EdgeInsets.only(right: 12),
-                  child: Container(
-                    width: 120,
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: const Color(0xFF003875),
-                          child: Icon(
-                            member['image'] as IconData,
-                            color: Colors.white,
-                            size: 30,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundColor: const Color(0xFF003875).withValues(alpha: 0.1),
+                            child: Icon(
+                              member['image'] as IconData,
+                              color: const Color(0xFF003875),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          member['name'] as String,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                          const SizedBox(height: 8),
+                          Text(
+                            member['name'] as String,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                        ),
-                        Text(
-                          member['role'] as String,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[600],
+                          Text(
+                            member['role'] as String,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey[600],
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -307,6 +307,13 @@ class AssociationProfileScreen extends StatelessWidget {
   }
 
   Widget _buildAchievements(BuildContext context) {
+    final achievements = [
+      {'title': '500+', 'desc': 'Başarılı Operasyon'},
+      {'title': '1000+', 'desc': 'Eğitim Alan Kişi'},
+      {'title': '50+', 'desc': 'Aktif Gönüllü'},
+      {'title': '15+', 'desc': 'Yıllık Deneyim'},
+    ];
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -320,56 +327,33 @@ class AssociationProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            children: [
-              Expanded(
-                child: _buildStatCard('500+', 'Kurtarılan Can', Icons.favorite),
+            children: achievements.map((achievement) => Expanded(
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        achievement['title'] as String,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF003875),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        achievement['desc'] as String,
+                        style: const TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard('1200+', 'Eğitim Alan', Icons.school),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard('350+', 'Operasyon', Icons.search),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard('15 Yıl', 'Tecrübe', Icons.verified),
-              ),
-            ],
+            )).toList(),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String value, String label, IconData icon) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(icon, size: 32, color: const Color(0xFF003875)),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF003875),
-              ),
-            ),
-            Text(
-              label,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -388,58 +372,36 @@ class AssociationProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.phone, color: Color(0xFF003875)),
-                  title: const Text('Telefon'),
-                  subtitle: const Text('+90 555 123 4567'),
-                  onTap: () => _launchUrl('tel:+905551234567'),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.email, color: Color(0xFF003875)),
-                  title: const Text('E-posta'),
-                  subtitle: const Text('info@tulpars.org.tr'),
-                  onTap: () => _launchUrl('mailto:info@tulpars.org.tr'),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.location_on, color: Color(0xFF003875)),
-                  title: const Text('Adres'),
-                  subtitle: const Text('İstanbul, Türkiye'),
-                  onTap: () {},
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.language, color: Color(0xFF003875)),
-                  title: const Text('Web Sitesi'),
-                  subtitle: const Text('www.tulpars.org.tr'),
-                  onTap: () => _launchUrl('https://www.tulpars.org.tr'),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Sosyal Medya',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  _buildContactItem(
+                    Icons.location_on,
+                    'Adres',
+                    'Merkez Mahallesi, Atatürk Caddesi No:123\nAnkara, Türkiye',
+                    null,
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildSocialButton(Icons.facebook, () {}),
-                      _buildSocialButton(Icons.camera_alt, () {}),
-                      _buildSocialButton(Icons.alternate_email, () {}),
-                      _buildSocialButton(Icons.video_library, () {}),
-                    ],
+                  const Divider(),
+                  _buildContactItem(
+                    Icons.phone,
+                    'Telefon',
+                    '+90 312 123 45 67',
+                    () => _launchUrl('tel:+903121234567'),
+                  ),
+                  const Divider(),
+                  _buildContactItem(
+                    Icons.email,
+                    'E-posta',
+                    'info@tulpars.org.tr',
+                    () => _launchUrl('mailto:info@tulpars.org.tr'),
+                  ),
+                  const Divider(),
+                  _buildContactItem(
+                    Icons.language,
+                    'Web Sitesi',
+                    'www.tulpars.org.tr',
+                    () => _launchUrl('https://www.tulpars.org.tr'),
                   ),
                 ],
               ),
@@ -450,17 +412,45 @@ class AssociationProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialButton(IconData icon, VoidCallback onTap) {
+  Widget _buildContactItem(
+    IconData icon,
+    String title,
+    String value,
+    VoidCallback? onTap,
+  ) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF003875).withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Icon(icon, color: const Color(0xFF003875)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      color: onTap != null ? const Color(0xFF003875) : null,
+                      decoration: onTap != null ? TextDecoration.underline : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (onTap != null)
+              const Icon(Icons.open_in_new, size: 16, color: Colors.grey),
+          ],
         ),
-        child: Icon(icon, color: const Color(0xFF003875)),
       ),
     );
   }

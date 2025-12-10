@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
+import '../../../core/services/navigation_service.dart';
 import '../../bloc/auth/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -71,8 +71,7 @@ class _LoginScreenState extends State<LoginScreen>
             'Tulpars uygulamasına giriş yapmak için biyometrik kimliğinizi doğrulayın',
       );
       if (authenticated && mounted) {
-        // TODO: Navigate to main screen
-        context.go('/main');
+        NavigationService.goToMain(context);
       }
     } on PlatformException catch (e) {
       debugPrint('Biometric authentication failed: $e');
@@ -103,30 +102,15 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _handleGuestLogin() {
-    // Navigate to main screen as guest
-    context.go('/main');
+    NavigationService.goToMain(context);
   }
 
   void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFFDC2626),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
+    NavigationService.showErrorSnackBar(context, message);
   }
 
   void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF10B981),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
+    NavigationService.showSuccessSnackBar(context, message);
   }
 
   @override
@@ -135,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen>
       listener: (context, state) {
         if (state is Authenticated) {
           setState(() => _isLoading = false);
-          context.go('/main');
+          NavigationService.goToMain(context);
         } else if (state is AuthError) {
           setState(() => _isLoading = false);
           _showErrorSnackBar(state.message);
@@ -151,6 +135,14 @@ class _LoginScreenState extends State<LoginScreen>
       },
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => NavigationService.goBack(context, fallbackRoute: '/auth'),
+          ),
+        ),
         body: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
@@ -161,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
                     // Logo and Title
                     _buildHeader(),
 
@@ -205,6 +197,11 @@ class _LoginScreenState extends State<LoginScreen>
 
                     // Guest Login
                     _buildGuestButton(),
+
+                    const SizedBox(height: 24),
+
+                    // Register Link
+                    _buildRegisterLink(),
 
                     const SizedBox(height: 20),
                   ],
@@ -528,6 +525,28 @@ class _LoginScreenState extends State<LoginScreen>
           decoration: TextDecoration.underline,
         ),
       ),
+    );
+  }
+
+  Widget _buildRegisterLink() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Hesabınız yok mu? ',
+          style: TextStyle(color: Color(0xFF64748B)),
+        ),
+        TextButton(
+          onPressed: () => NavigationService.goToRegister(context),
+          child: const Text(
+            'Kayıt Olun',
+            style: TextStyle(
+              color: Color(0xFF003875),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

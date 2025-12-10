@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import '../../../core/services/navigation_service.dart';
 import '../../bloc/auth/auth_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -48,14 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFFDC2626),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
+    NavigationService.showErrorSnackBar(context, message);
   }
 
   @override
@@ -64,7 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       listener: (context, state) {
         if (state is Authenticated) {
           setState(() => _isLoading = false);
-          context.go('/main');
+          NavigationService.goToMain(context);
         } else if (state is AuthError) {
           setState(() => _isLoading = false);
           _showErrorSnackBar(state.message);
@@ -79,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/auth'),
+            onPressed: () => NavigationService.goBack(context, fallbackRoute: '/auth'),
           ),
         ),
         body: SafeArea(
@@ -312,7 +305,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           style: TextStyle(color: Color(0xFF64748B)),
         ),
         TextButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () => NavigationService.goToLogin(context),
           child: const Text(
             'Giriş Yapın',
             style: TextStyle(
