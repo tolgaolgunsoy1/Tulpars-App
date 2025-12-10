@@ -24,7 +24,6 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -107,11 +106,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ],
           ),
-          child: Image.asset(
-            'assets/images/appstore.png',
-            width: 50,
-            height: 50,
-          ),
+          child: const Icon(Icons.emergency, size: 50, color: Colors.white),
         ),
         const SizedBox(height: 16),
         const Text(

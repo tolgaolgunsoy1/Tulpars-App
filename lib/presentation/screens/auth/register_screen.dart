@@ -38,6 +38,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    // Demo register for testing
+    if (_emailController.text.trim().isNotEmpty && 
+        _passwordController.text.length >= 6 &&
+        _nameController.text.trim().isNotEmpty) {
+      NavigationService.showSuccessSnackBar(context, 'Demo kayıt başarılı!');
+      Future.delayed(const Duration(seconds: 1), () {
+        NavigationService.goToMain(context);
+      });
+      return;
+    }
+
     context.read<AuthBloc>().add(
           RegisterRequested(
             email: _emailController.text.trim(),

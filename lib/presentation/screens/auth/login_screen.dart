@@ -82,6 +82,15 @@ class _LoginScreenState extends State<LoginScreen>
   void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Demo login for testing
+    if (_emailController.text.trim() == 'demo@test.com' && 
+        _passwordController.text == '123456') {
+      NavigationService.showSuccessSnackBar(context, 'Demo giriş başarılı!');
+      await Future.delayed(const Duration(seconds: 1));
+      NavigationService.goToMain(context);
+      return;
+    }
+
     context.read<AuthBloc>().add(
           LoginRequested(
             email: _emailController.text.trim(),
@@ -247,6 +256,36 @@ class _LoginScreenState extends State<LoginScreen>
         const Text(
           'Hesabınıza Giriş Yapın',
           style: TextStyle(fontSize: 16, color: Color(0xFF64748B)),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF10B981).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+          ),
+          child: const Column(
+            children: [
+              Text(
+                'Demo Giriş Bilgileri:',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF10B981),
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'E-posta: demo@test.com',
+                style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+              ),
+              Text(
+                'Şifre: 123456',
+                style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+              ),
+            ],
+          ),
         ),
       ],
     );
