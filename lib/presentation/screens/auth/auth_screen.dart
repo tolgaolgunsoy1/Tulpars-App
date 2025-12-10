@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/services/navigation_service.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -55,10 +56,19 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Login Button
-                      _buildAuthButton('Giriş Yap', () => NavigationService.goToLogin(context)),
+                      // Enhanced Login Button
+                      _buildAuthButton('Gelişmiş Giriş', () => context.go('/enhanced-login')),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
+
+                      // Standard Login Button
+                      _buildAuthButton(
+                        'Standart Giriş',
+                        () => NavigationService.goToLogin(context),
+                        isOutlined: true,
+                      ),
+
+                      const SizedBox(height: 12),
 
                       // Register Button
                       _buildAuthButton(

@@ -94,9 +94,9 @@ class ProfileWrapper extends StatelessWidget {
 }
 
 class _GuestProfileScreen extends StatelessWidget {
-  final String guestName;
-
   const _GuestProfileScreen({required this.guestName});
+
+  final String guestName;
 
   @override
   Widget build(BuildContext context) {

@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
 
-    _slideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
+    _slideAnimation = Tween<double>(begin: 50, end: 0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
@@ -119,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _handleLogin() async {
-    // Klavyeyi kapat
     FocusScope.of(context).unfocus();
 
     if (!_formKey.currentState!.validate()) {
@@ -133,7 +132,6 @@ class _LoginScreenState extends State<LoginScreen>
       final email = _emailController.text.trim().toLowerCase();
       final password = _passwordController.text;
 
-      // Enhanced demo login with multiple test accounts
       if (_isDemoLogin(email, password)) {
         await Future.delayed(const Duration(milliseconds: 800));
         if (mounted) {
@@ -147,7 +145,6 @@ class _LoginScreenState extends State<LoginScreen>
         return;
       }
 
-      // Real Firebase login
       if (mounted) {
         context.read<AuthBloc>().add(
               LoginRequested(
@@ -182,22 +179,18 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    // Enhanced email validation
     if (!_isValidEmail(email)) {
       _showErrorSnackBar('Geçerli bir e-posta adresi girin');
       _emailFocusNode.requestFocus();
       return;
     }
 
-    // Show confirmation dialog
     final confirmed = await _showResetConfirmationDialog(email);
-    if (!confirmed) return;
+    if (!confirmed || !mounted) return;
 
-    if (mounted) {
-      context.read<AuthBloc>().add(
-            PasswordResetRequested(email: email),
-          );
-    }
+    context.read<AuthBloc>().add(
+          PasswordResetRequested(email: email),
+        );
   }
 
   bool _isValidEmail(String email) {
@@ -428,16 +421,16 @@ class _LoginScreenState extends State<LoginScreen>
           ),
           child: Column(
             children: [
-              Row(
+              const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.info_outline,
                     size: 16,
                     color: Color(0xFF10B981),
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
+                  SizedBox(width: 8),
+                  Text(
                     'Demo Giriş Bilgileri',
                     style: TextStyle(
                       fontSize: 13,
@@ -616,7 +609,6 @@ class _LoginScreenState extends State<LoginScreen>
           if (value.length > 128) {
             return 'Şifre çok uzun';
           }
-          // Check for common weak passwords
           if (_isWeakPassword(value)) {
             return 'Daha güçlü bir şifre seçin';
           }

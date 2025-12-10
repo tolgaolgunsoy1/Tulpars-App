@@ -14,6 +14,7 @@ import 'presentation/bloc/app/app_bloc.dart' as app;
 import 'presentation/bloc/auth/auth_bloc.dart' as auth;
 import 'presentation/screens/auth/auth_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
+import 'presentation/screens/auth/enhanced_login_screen.dart';
 import 'presentation/screens/auth/register_screen.dart';
 import 'presentation/screens/donations/donations_screen.dart';
 import 'presentation/screens/education/education_screen.dart';
@@ -113,6 +114,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/enhanced-login',
+      builder: (context, state) => const EnhancedLoginScreen(),
     ),
     GoRoute(
       path: '/register',
