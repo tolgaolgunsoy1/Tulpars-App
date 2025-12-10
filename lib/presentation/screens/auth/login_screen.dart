@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
 
-    _slideAnimation = Tween<double>(begin: 50, end: 0).animate(
+    _slideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
@@ -122,39 +123,58 @@ class _LoginScreenState extends State<LoginScreen>
     FocusScope.of(context).unfocus();
 
     if (!_formKey.currentState!.validate()) {
+      unawaited(_shakeController.forward().then((_) => _shakeController.reset()));
       return;
     }
 
     setState(() => _isLoading = true);
 
-    // Demo login kontrolü
-    if (_emailController.text.trim() == 'demo@test.com' &&
-        _passwordController.text == '123456') {
-      await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      final email = _emailController.text.trim().toLowerCase();
+      final password = _passwordController.text;
+
+      // Enhanced demo login with multiple test accounts
+      if (_isDemoLogin(email, password)) {
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (mounted) {
+          setState(() => _isLoading = false);
+          _showSuccessSnackBar('Demo giriş başarılı!');
+          await Future.delayed(const Duration(milliseconds: 500));
+          if (mounted) {
+            NavigationService.goToMain(context);
+          }
+        }
+        return;
+      }
+
+      // Real Firebase login
+      if (mounted) {
+        context.read<AuthBloc>().add(
+              LoginRequested(
+                email: email,
+                password: password,
+              ),
+            );
+      }
+    } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        _showSuccessSnackBar('Demo giriş başarılı!');
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
-          NavigationService.goToMain(context);
-        }
+        _showErrorSnackBar('Giriş yapılırken beklenmeyen bir hata oluştu');
       }
-      return;
-    }
-
-    // Gerçek login
-    if (mounted) {
-      context.read<AuthBloc>().add(
-            LoginRequested(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
     }
   }
 
+  bool _isDemoLogin(String email, String password) {
+    final demoAccounts = {
+      'demo@test.com': '123456',
+      'admin@tulpars.com': 'admin123',
+      'test@example.com': 'test123',
+    };
+    return demoAccounts[email] == password;
+  }
+
   void _handleForgotPassword() async {
-    final email = _emailController.text.trim();
+    final email = _emailController.text.trim().toLowerCase();
 
     if (email.isEmpty) {
       _showErrorSnackBar('Lütfen e-posta adresinizi girin');
@@ -162,30 +182,100 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    // Email validasyonu
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+    // Enhanced email validation
+    if (!_isValidEmail(email)) {
       _showErrorSnackBar('Geçerli bir e-posta adresi girin');
       _emailFocusNode.requestFocus();
       return;
     }
 
-    context.read<AuthBloc>().add(
-          PasswordResetRequested(email: email),
-        );
+    // Show confirmation dialog
+    final confirmed = await _showResetConfirmationDialog(email);
+    if (!confirmed) return;
+
+    if (mounted) {
+      context.read<AuthBloc>().add(
+            PasswordResetRequested(email: email),
+          );
+    }
+  }
+
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+        .hasMatch(email);
+  }
+
+  Future<bool> _showResetConfirmationDialog(String email) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Şifre Sıfırlama'),
+            content: Text(
+              '$email adresine şifre sıfırlama bağlantısı gönderilsin mi?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('İptal'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Gönder'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   void _handleGuestLogin() {
     NavigationService.goToMain(context);
   }
 
+  bool _isWeakPassword(String password) {
+    final weakPasswords = {
+      '123456', 'password', '123456789', 'qwerty', 'abc123',
+      'password123', '111111', '123123', 'admin', 'letmein'
+    };
+    return weakPasswords.contains(password.toLowerCase());
+  }
+
   void _showErrorSnackBar(String message) {
     if (!mounted) return;
-    NavigationService.showErrorSnackBar(context, message);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: const Color(0xFFDC2626),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 4),
+      ),
+    );
   }
 
   void _showSuccessSnackBar(String message) {
     if (!mounted) return;
-    NavigationService.showSuccessSnackBar(context, message);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: const Color(0xFF10B981),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -358,22 +448,34 @@ class _LoginScreenState extends State<LoginScreen>
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                'E-posta: demo@test.com',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Şifre: 123456',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w500,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '• demo@test.com / 123456',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    '• admin@tulpars.com / admin123',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    '• test@example.com / test123',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -432,8 +534,12 @@ class _LoginScreenState extends State<LoginScreen>
           if (value == null || value.trim().isEmpty) {
             return 'E-posta adresi gerekli';
           }
-          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+          final email = value.trim().toLowerCase();
+          if (!_isValidEmail(email)) {
             return 'Geçerli bir e-posta adresi girin';
+          }
+          if (email.length > 254) {
+            return 'E-posta adresi çok uzun';
           }
           return null;
         },
@@ -506,6 +612,13 @@ class _LoginScreenState extends State<LoginScreen>
           }
           if (value.length < 6) {
             return 'Şifre en az 6 karakter olmalı';
+          }
+          if (value.length > 128) {
+            return 'Şifre çok uzun';
+          }
+          // Check for common weak passwords
+          if (_isWeakPassword(value)) {
+            return 'Daha güçlü bir şifre seçin';
           }
           return null;
         },
@@ -637,7 +750,9 @@ class _LoginScreenState extends State<LoginScreen>
   Widget _buildDivider() {
     return Row(
       children: [
-        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 1)),
+        Expanded(
+          child: Divider(color: Colors.grey.shade300, thickness: 1),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
@@ -649,7 +764,9 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           ),
         ),
-        Expanded(child: Divider(color: Colors.grey.shade300, thickness: 1)),
+        Expanded(
+          child: Divider(color: Colors.grey.shade300, thickness: 1),
+        ),
       ],
     );
   }

@@ -163,23 +163,39 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   String _getFirebaseErrorMessage(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
-        return 'Bu e-posta ile kayıtlı kullanıcı bulunamadı';
+        return 'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı';
       case 'wrong-password':
-        return 'Hatalı şifre';
+        return 'E-posta veya şifre hatalı';
+      case 'invalid-credential':
+        return 'Giriş bilgileri geçersiz';
       case 'email-already-in-use':
-        return 'Bu e-posta zaten kullanılıyor';
+        return 'Bu e-posta adresi zaten kullanılıyor';
       case 'weak-password':
-        return 'Şifre çok zayıf';
+        return 'Şifre çok zayıf. En az 8 karakter, harf ve rakam kullanın';
       case 'invalid-email':
-        return 'Geçersiz e-posta adresi';
+        return 'Geçersiz e-posta adresi formatı';
       case 'user-disabled':
-        return 'Bu hesap devre dışı bırakılmış';
+        return 'Bu hesap güvenlik nedeniyle devre dışı bırakılmış';
       case 'too-many-requests':
-        return 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin';
+        return 'Çok fazla başarısız deneme. 15 dakika sonra tekrar deneyin';
       case 'operation-not-allowed':
-        return 'Bu işlem şu anda kullanılamıyor';
+        return 'Bu giriş yöntemi şu anda aktif değil';
+      case 'network-request-failed':
+        return 'İnternet bağlantınızı kontrol edin';
+      case 'requires-recent-login':
+        return 'Güvenlik için tekrar giriş yapmanız gerekiyor';
+      case 'account-exists-with-different-credential':
+        return 'Bu e-posta farklı bir yöntemle kayıtlı';
+      case 'invalid-verification-code':
+        return 'Doğrulama kodu geçersiz';
+      case 'invalid-verification-id':
+        return 'Doğrulama işlemi geçersiz';
+      case 'missing-email':
+        return 'E-posta adresi gerekli';
+      case 'missing-password':
+        return 'Şifre gerekli';
       default:
-        return e.message ?? 'Bir hata oluştu';
+        return 'Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyin';
     }
   }
 }

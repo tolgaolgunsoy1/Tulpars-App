@@ -18,13 +18,32 @@ class AuthService {
     String password,
   ) async {
     try {
+      // Input validation
+      if (email.trim().isEmpty) {
+        throw FirebaseAuthException(
+          code: 'missing-email',
+          message: 'E-posta adresi gerekli',
+        );
+      }
+      if (password.isEmpty) {
+        throw FirebaseAuthException(
+          code: 'missing-password', 
+          message: 'Şifre gerekli',
+        );
+      }
+
       final result = await _auth.signInWithEmailAndPassword(
-        email: email,
+        email: email.trim().toLowerCase(),
         password: password,
       );
       return result;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'unknown',
+        message: 'Beklenmeyen bir hata oluştu: $e',
+      );
     }
   }
 
@@ -34,13 +53,38 @@ class AuthService {
     String password,
   ) async {
     try {
+      // Input validation
+      if (email.trim().isEmpty) {
+        throw FirebaseAuthException(
+          code: 'missing-email',
+          message: 'E-posta adresi gerekli',
+        );
+      }
+      if (password.isEmpty) {
+        throw FirebaseAuthException(
+          code: 'missing-password',
+          message: 'Şifre gerekli',
+        );
+      }
+      if (password.length < 8) {
+        throw FirebaseAuthException(
+          code: 'weak-password',
+          message: 'Şifre en az 8 karakter olmalı',
+        );
+      }
+
       final result = await _auth.createUserWithEmailAndPassword(
-        email: email,
+        email: email.trim().toLowerCase(),
         password: password,
       );
       return result;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'unknown',
+        message: 'Beklenmeyen bir hata oluştu: $e',
+      );
     }
   }
 
@@ -90,9 +134,23 @@ class AuthService {
   // Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      if (email.trim().isEmpty) {
+        throw FirebaseAuthException(
+          code: 'missing-email',
+          message: 'E-posta adresi gerekli',
+        );
+      }
+      
+      await _auth.sendPasswordResetEmail(
+        email: email.trim().toLowerCase(),
+      );
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'unknown',
+        message: 'E-posta gönderilirken hata oluştu: $e',
+      );
     }
   }
 

@@ -31,37 +31,150 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _handleRegister() {
-    if (!_formKey.currentState!.validate()) return;
+  void _handleRegister() async {
+    // Klavyeyi kapat
+    FocusScope.of(context).unfocus();
+
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     if (!_acceptTerms) {
-      _showErrorSnackBar('Kullanım şartlarını kabul etmelisiniz');
+      _showErrorSnackBar('Kullanım şartlarını ve gizlilik politikasını kabul etmelisiniz');
       return;
     }
 
-    // Demo register for testing
-    if (_emailController.text.trim().isNotEmpty && 
-        _passwordController.text.length >= 6 &&
-        _nameController.text.trim().isNotEmpty) {
-      NavigationService.showSuccessSnackBar(context, 'Demo kayıt başarılı!');
-      Future.delayed(const Duration(seconds: 1), () {
+    setState(() => _isLoading = true);
+
+    try {
+      final name = _nameController.text.trim();
+      final email = _emailController.text.trim().toLowerCase();
+      final password = _passwordController.text;
+
+      // Enhanced validation
+      if (!_isValidName(name)) {
+        _showErrorSnackBar('Geçerli bir ad soyad girin');
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      if (!_isValidEmail(email)) {
+        _showErrorSnackBar('Geçerli bir e-posta adresi girin');
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      if (_isWeakPassword(password)) {
+        _showErrorSnackBar('Daha güçlü bir şifre seçin');
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      // Demo register for testing
+      if (_isDemoRegister(email)) {
+        await Future.delayed(const Duration(milliseconds: 1200));
         if (mounted) {
-          NavigationService.goToMain(context);
+          setState(() => _isLoading = false);
+          _showSuccessSnackBar('Demo kayıt başarılı! Hoş geldiniz!');
+          await Future.delayed(const Duration(milliseconds: 800));
+          if (mounted) {
+            NavigationService.goToMain(context);
+          }
         }
-      });
-      return;
-    }
+        return;
+      }
 
-    context.read<AuthBloc>().add(
-          RegisterRequested(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            name: _nameController.text.trim(),
-          ),
-        );
+      // Real Firebase registration
+      if (mounted) {
+        context.read<AuthBloc>().add(
+              RegisterRequested(
+                email: email,
+                password: password,
+                name: name,
+              ),
+            );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _showErrorSnackBar('Kayıt sırasında beklenmeyen bir hata oluştu');
+      }
+    }
+  }
+
+  bool _isDemoRegister(String email) {
+    return email.contains('demo') || 
+           email.contains('test') || 
+           email.endsWith('@example.com');
+  }
+
+  bool _isValidName(String name) {
+    if (name.length < 2) return false;
+    if (name.length > 50) return false;
+    // Check if contains at least one letter
+    if (!RegExp(r'[a-zA-ZÀ-ÿ]').hasMatch(name)) return false;
+    // Check for invalid characters
+    if (RegExp(r'[0-9@#$%^&*()_+=\[\]{}|;:,.<>?]').hasMatch(name)) return false;
+    return true;
+  }
+
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+        .hasMatch(email);
+  }
+
+  bool _isWeakPassword(String password) {
+    if (password.length < 8) return true;
+    
+    final weakPasswords = {
+      '12345678', 'password', 'password123', 'qwerty123', 'abc12345',
+      '11111111', '123123123', 'admin123', 'letmein123'
+    };
+    
+    if (weakPasswords.contains(password.toLowerCase())) return true;
+    
+    // Check for at least one number and one letter
+    if (!RegExp(r'(?=.*[a-zA-Z])(?=.*[0-9])').hasMatch(password)) return true;
+    
+    return false;
   }
 
   void _showErrorSnackBar(String message) {
-    NavigationService.showErrorSnackBar(context, message);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: const Color(0xFFDC2626),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  void _showSuccessSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: const Color(0xFF10B981),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -163,8 +276,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         fillColor: Colors.white,
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
+        if (value == null || value.trim().isEmpty) {
           return 'Ad soyad gerekli';
+        }
+        final name = value.trim();
+        if (name.length < 2) {
+          return 'Ad soyad en az 2 karakter olmalı';
+        }
+        if (name.length > 50) {
+          return 'Ad soyad çok uzun';
+        }
+        if (!RegExp(r'^[a-zA-ZÀ-ÿ\s]+$').hasMatch(name)) {
+          return 'Sadece harf ve boşluk kullanın';
         }
         return null;
       },
@@ -185,11 +308,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         fillColor: Colors.white,
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
+        if (value == null || value.trim().isEmpty) {
           return 'E-posta adresi gerekli';
         }
-        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+        final email = value.trim().toLowerCase();
+        if (!_isValidEmail(email)) {
           return 'Geçerli bir e-posta adresi girin';
+        }
+        if (email.length > 254) {
+          return 'E-posta adresi çok uzun';
         }
         return null;
       },
@@ -203,7 +330,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         labelText: 'Şifre',
-        hintText: 'En az 6 karakter',
+        hintText: 'En az 8 karakter, harf ve rakam',
         prefixIcon: const Icon(Icons.lock_outline),
         suffixIcon: IconButton(
           icon: Icon(
@@ -221,8 +348,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (value == null || value.isEmpty) {
           return 'Şifre gerekli';
         }
-        if (value.length < 6) {
-          return 'Şifre en az 6 karakter olmalı';
+        if (value.length < 8) {
+          return 'Şifre en az 8 karakter olmalı';
+        }
+        if (value.length > 128) {
+          return 'Şifre çok uzun';
+        }
+        if (!RegExp(r'(?=.*[a-zA-Z])(?=.*[0-9])').hasMatch(value)) {
+          return 'Şifre en az bir harf ve bir rakam içermeli';
+        }
+        if (_isWeakPassword(value)) {
+          return 'Daha güçlü bir şifre seçin';
         }
         return null;
       },
