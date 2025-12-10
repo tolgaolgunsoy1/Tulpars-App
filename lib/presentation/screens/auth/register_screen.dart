@@ -44,7 +44,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _nameController.text.trim().isNotEmpty) {
       NavigationService.showSuccessSnackBar(context, 'Demo kayıt başarılı!');
       Future.delayed(const Duration(seconds: 1), () {
-        NavigationService.goToMain(context);
+        if (mounted) {
+          NavigationService.goToMain(context);
+        }
       });
       return;
     }
