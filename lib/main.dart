@@ -181,7 +181,7 @@ final GoRouter _router = GoRouter(
       ],
     ),
   ],
-  initialLocation: '/',
+  initialLocation: '/login',
   errorBuilder: (context, state) => Scaffold(
     appBar: AppBar(
       title: const Text('Sayfa Bulunamadı'),

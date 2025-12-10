@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen>
   late AnimationController _shakeController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
-  late Animation<Offset> _shakeAnimation;
 
   @override
   void initState() {
@@ -67,16 +65,6 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
 
-    _shakeAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0.05, 0),
-    ).animate(
-      CurvedAnimation(
-        parent: _shakeController,
-        curve: Curves.elasticIn,
-      ),
-    );
-
     _animationController.forward();
   }
 
@@ -95,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen>
     try {
       final canCheck = await _localAuth.canCheckBiometrics;
       final isSupported = await _localAuth.isDeviceSupported();
-      
+
       if (mounted) {
         setState(() {
           _canCheckBiometrics = canCheck;
@@ -113,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen>
         localizedReason:
             'Tulpars uygulamasına giriş yapmak için biyometrik kimliğinizi doğrulayın',
       );
-      
+
       if (authenticated && mounted) {
         _showSuccessSnackBar('Biyometrik doğrulama başarılı');
         await Future.delayed(const Duration(milliseconds: 500));
@@ -134,14 +122,13 @@ class _LoginScreenState extends State<LoginScreen>
     FocusScope.of(context).unfocus();
 
     if (!_formKey.currentState!.validate()) {
-      _shakeController.forward(from: 0);
       return;
     }
 
     setState(() => _isLoading = true);
 
     // Demo login kontrolü
-    if (_emailController.text.trim() == 'demo@test.com' && 
+    if (_emailController.text.trim() == 'demo@test.com' &&
         _passwordController.text == '123456') {
       await Future.delayed(const Duration(milliseconds: 800));
       if (mounted) {
@@ -168,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _handleForgotPassword() async {
     final email = _emailController.text.trim();
-    
+
     if (email.isEmpty) {
       _showErrorSnackBar('Lütfen e-posta adresinizi girin');
       _emailFocusNode.requestFocus();
@@ -215,7 +202,6 @@ class _LoginScreenState extends State<LoginScreen>
           });
         } else if (state is AuthError) {
           setState(() => _isLoading = false);
-          _shakeController.forward(from: 0);
           _showErrorSnackBar(state.message);
         } else if (state is PasswordResetSent) {
           setState(() => _isLoading = false);
@@ -254,39 +240,36 @@ class _LoginScreenState extends State<LoginScreen>
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
-                child: SlideTransition(
-                  position: _shakeAnimation,
-                  child: Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const SizedBox(height: 20),
-                        _buildHeader(),
-                        const SizedBox(height: 48),
-                        _buildEmailField(),
+                child: Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 20),
+                      _buildHeader(),
+                      const SizedBox(height: 48),
+                      _buildEmailField(),
+                      const SizedBox(height: 16),
+                      _buildPasswordField(),
+                      const SizedBox(height: 12),
+                      _buildOptionsRow(),
+                      const SizedBox(height: 32),
+                      _buildLoginButton(),
+                      if (_isBiometricSupported && _canCheckBiometrics) ...[
                         const SizedBox(height: 16),
-                        _buildPasswordField(),
-                        const SizedBox(height: 12),
-                        _buildOptionsRow(),
-                        const SizedBox(height: 32),
-                        _buildLoginButton(),
-                        if (_isBiometricSupported && _canCheckBiometrics) ...[
-                          const SizedBox(height: 16),
-                          _buildBiometricButton(),
-                        ],
-                        const SizedBox(height: 32),
-                        _buildDivider(),
-                        const SizedBox(height: 24),
-                        _buildSocialLogins(),
-                        const SizedBox(height: 32),
-                        _buildGuestButton(),
-                        const SizedBox(height: 24),
-                        _buildRegisterLink(),
-                        const SizedBox(height: 20),
+                        _buildBiometricButton(),
                       ],
-                    ),
+                      const SizedBox(height: 32),
+                      _buildDivider(),
+                      const SizedBox(height: 24),
+                      _buildSocialLogins(),
+                      const SizedBox(height: 32),
+                      _buildGuestButton(),
+                      const SizedBox(height: 24),
+                      _buildRegisterLink(),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
               ),
@@ -583,9 +566,8 @@ class _LoginScreenState extends State<LoginScreen>
 
   Widget _buildLoginButton() {
     return Semantics(
-      label: _isLoading
-          ? 'Giriş yapılıyor, lütfen bekleyin'
-          : 'Giriş yap butonu',
+      label:
+          _isLoading ? 'Giriş yapılıyor, lütfen bekleyin' : 'Giriş yap butonu',
       button: true,
       enabled: !_isLoading,
       child: SizedBox(
@@ -763,9 +745,8 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
         TextButton(
-          onPressed: _isLoading
-              ? null
-              : () => NavigationService.goToRegister(context),
+          onPressed:
+              _isLoading ? null : () => NavigationService.goToRegister(context),
           style: TextButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             minimumSize: Size.zero,
