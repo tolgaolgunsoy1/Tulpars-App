@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 // Home Screen - Ana Ekran
@@ -21,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   static const _warningColor = Color(0xFFF59E0B);
   static const _successColor = Color(0xFF10B981);
 
+  DateTime? _lastBackPressed;
+
   int _getSelectedIndex(String location) {
     const routeIndexMap = {
       '/main': 0,
@@ -37,15 +41,98 @@ class _HomeScreenState extends State<HomeScreen> {
     final currentLocation = GoRouterState.of(context).uri.toString();
     final selectedIndex = _getSelectedIndex(currentLocation);
     final isMainScreen = currentLocation == '/main';
-
-    return Scaffold(
-      backgroundColor: _backgroundColor,
-      drawer: isMainScreen ? _buildDrawer(context) : null,
-      body: SafeArea(
-        child: isMainScreen ? _buildHomeContent() : widget.child,
+    
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBackButton(context);
+      },
+      child: Scaffold(
+        backgroundColor: _backgroundColor,
+        drawer: isMainScreen ? _buildDrawer(context) : null,
+        body: SafeArea(
+          child: isMainScreen ? _buildHomeContent() : widget.child,
+        ),
+        bottomNavigationBar: _buildBottomNavBar(selectedIndex),
       ),
-      bottomNavigationBar: _buildBottomNavBar(selectedIndex),
     );
+  }
+
+  Future<void> _handleBackButton(BuildContext context) async {
+    final currentLocation = GoRouterState.of(context).uri.toString();
+    
+    // Ana sayfadaysa çıkış onayı göster
+    if (currentLocation == '/main') {
+      final now = DateTime.now();
+      if (_lastBackPressed == null || 
+          now.difference(_lastBackPressed!) > const Duration(seconds: 2)) {
+        _lastBackPressed = now;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Çıkmak için tekrar geri tuşuna basın'),
+              ],
+            ),
+            backgroundColor: _primaryColor,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+        return;
+      }
+      
+      // Çıkış onayı göster
+      final shouldExit = await _showExitConfirmation(context);
+      if (shouldExit && context.mounted) {
+        unawaited(SystemNavigator.pop());
+      }
+    } else {
+      // Diğer sayfalarda ana sayfaya dön
+      context.go('/main');
+    }
+  }
+
+  Future<bool> _showExitConfirmation(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.exit_to_app, color: _primaryColor),
+            SizedBox(width: 8),
+            Text('Uygulamadan Çık'),
+          ],
+        ),
+        content: const Text(
+          'Uygulamadan çıkmak istediğinizden emin misiniz?',
+          style: TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(
+              'İptal',
+              style: TextStyle(color: Color(0xFF64748B)),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _primaryColor,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Çıkış Yap'),
+          ),
+        ],
+      ),
+    ) ?? false;
   }
 
   Widget _buildHomeContent() {

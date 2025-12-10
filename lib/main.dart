@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -72,6 +74,57 @@ class TulparsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        
+        final shouldExit = await _showExitConfirmation(context);
+        if (shouldExit && context.mounted) {
+          unawaited(SystemNavigator.pop());
+        }
+      },
+      child: _buildApp(context),
+    );
+  }
+
+  Future<bool> _showExitConfirmation(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.exit_to_app, color: Color(0xFF003875)),
+            SizedBox(width: 8),
+            Text('Uygulamadan Çık'),
+          ],
+        ),
+        content: const Text(
+          'Uygulamadan çıkmak istediğinizden emin misiniz?',
+          style: TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(
+              'İptal',
+              style: TextStyle(color: Color(0xFF64748B)),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF003875),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Çıkış Yap'),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  Widget _buildApp(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<app.AppBloc>(
