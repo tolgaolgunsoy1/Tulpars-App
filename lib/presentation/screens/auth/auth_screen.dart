@@ -56,14 +56,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Enhanced Login Button
-                      _buildAuthButton('Gelişmiş Giriş', () => context.go('/enhanced-login')),
-
-                      const SizedBox(height: 12),
-
                       // Standard Login Button
                       _buildAuthButton(
-                        'Standart Giriş',
+                        'Giriş Yap',
                         () => NavigationService.goToLogin(context),
                         isOutlined: true,
                       ),

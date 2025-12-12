@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
+import 'category_modules_screen.dart';
 
 class EducationScreen extends StatefulWidget {
   const EducationScreen({super.key});
@@ -9,155 +10,118 @@ class EducationScreen extends StatefulWidget {
   State<EducationScreen> createState() => _EducationScreenState();
 }
 
-class _EducationScreenState extends State<EducationScreen>
-    with TickerProviderStateMixin {
-  final List<Map<String, dynamic>> _trainingPrograms = [
+class _EducationScreenState extends State<EducationScreen> {
+
+  final List<Map<String, dynamic>> _categories = [
     {
-      'id': 'first_aid',
-      'title': 'İlk Yardım Eğitimi',
-      'description': 'Temel ilk yardım bilgileri ve uygulamalı eğitim',
-      'icon': Icons.medical_services,
-      'color': const Color(0xFFDC2626),
-      'duration': '16 Saat',
-      'level': 'Başlangıç',
-      'instructor': 'Dr. Ahmet Yılmaz',
-      'schedule': 'Hafta sonları 09:00-17:00',
-      'capacity': 25,
-      'enrolled': 18,
-      'upcoming': '15-16 Aralık 2024',
-      'topics': [
-        'Temel yaşam desteği',
-        'Yaralanma vakaları',
-        'Acil durum müdahalesi',
-        'CPR uygulaması',
-      ],
-    },
-    {
-      'id': 'search_rescue',
-      'title': 'Arama Kurtarma Eğitimi',
-      'description': 'Doğal afetlerde arama kurtarma teknikleri',
-      'icon': Icons.search,
-      'color': const Color(0xFFF59E0B),
-      'duration': '24 Saat',
-      'level': 'Orta',
-      'instructor': 'Komutan Mehmet Kaya',
-      'schedule': 'Hafta içi akşamları',
-      'capacity': 20,
-      'enrolled': 15,
-      'upcoming': '20-22 Aralık 2024',
-      'topics': [
-        'Harita okuma',
-        'Çadır kurma',
-        'İletişim teknikleri',
-        'Kurtarma operasyonları',
-      ],
-    },
-    {
-      'id': 'fire_safety',
-      'title': 'Yangın Güvenliği',
-      'description': 'Yangın önleme ve müdahale eğitimi',
+      'title': 'Yangın',
+      'description': 'Yangın güvenliği ve söndürme teknikleri',
       'icon': Icons.local_fire_department,
-      'color': const Color(0xFFEF4444),
-      'duration': '12 Saat',
-      'level': 'Başlangıç',
-      'instructor': 'İtfaiye Uzmanı Ayşe Demir',
-      'schedule': 'Cumartesi günleri',
-      'capacity': 30,
-      'enrolled': 22,
-      'upcoming': '28 Aralık 2024',
-      'topics': [
-        'Yangın söndürme',
-        'Tahliye prosedürleri',
-        'Önleme tedbirleri',
-        'Ekipman kullanımı',
-      ],
+      'color': const Color(0xFFDC2626),
+      'moduleCount': 5,
+      'completedCount': 2,
+      'estimatedTime': '2 saat',
     },
     {
-      'id': 'youth_leadership',
-      'title': 'Gençlik Liderlik Eğitimi',
-      'description': 'Liderlik becerileri ve toplumsal sorumluluk',
-      'icon': Icons.psychology,
-      'color': const Color(0xFF8B5CF6),
-      'duration': '20 Saat',
-      'level': 'İleri',
-      'instructor': 'Sosyal Hizmet Uzmanı Fatma Öztürk',
-      'schedule': 'Pazar günleri',
-      'capacity': 15,
-      'enrolled': 12,
-      'upcoming': '5-6 Ocak 2025',
-      'topics': [
-        'İletişim becerileri',
-        'Takım çalışması',
-        'Proje yönetimi',
-        'Toplumsal hizmet',
-      ],
+      'title': 'Deprem',
+      'description': 'Deprem güvenliği ve hazırlık',
+      'icon': Icons.home_repair_service,
+      'color': const Color(0xFFF59E0B),
+      'moduleCount': 5,
+      'completedCount': 1,
+      'estimatedTime': '2.5 saat',
+    },
+    {
+      'title': 'İlk Yardım',
+      'description': 'Temel ilk yardım ve CPR',
+      'icon': Icons.medical_services,
+      'color': const Color(0xFF10B981),
+      'moduleCount': 5,
+      'completedCount': 0,
+      'estimatedTime': '3 saat',
+    },
+    {
+      'title': 'Su Güvenliği',
+      'description': 'Su güvenliği ve boğulma önleme',
+      'icon': Icons.pool,
+      'color': const Color(0xFF3B82F6),
+      'moduleCount': 5,
+      'completedCount': 0,
+      'estimatedTime': '1.5 saat',
     },
   ];
 
-  final List<Map<String, dynamic>> _certificates = [
-    {
-      'title': 'İlk Yardım Sertifikası',
-      'description': 'Uluslararası Kızılhaç onaylı sertifika',
-      'icon': Icons.verified,
-      'color': const Color(0xFFDC2626),
-      'validity': '3 Yıl',
-    },
-    {
-      'title': 'Arama Kurtarma Sertifikası',
-      'description': 'AFAD onaylı profesyonel sertifika',
-      'icon': Icons.military_tech,
-      'color': const Color(0xFFF59E0B),
-      'validity': '5 Yıl',
-    },
-    {
-      'title': 'Yangın Güvenliği Sertifikası',
-      'description': 'İtfaiye Bakanlığı onaylı',
-      'icon': Icons.local_fire_department,
-      'color': const Color(0xFFEF4444),
-      'validity': '2 Yıl',
-    },
-  ];
+
+
+  List<Map<String, dynamic>> _getModulesForCategory(String categoryTitle) {
+    switch (categoryTitle) {
+      case 'Yangın':
+        return [
+          {'title': 'Yangın Güvenliği Temelleri', 'duration': '15 dk'},
+          {'title': 'Yangın Çıkış Yolları', 'duration': '12 dk'},
+          {'title': 'Yangın Söndürme Teknikleri', 'duration': '18 dk'},
+          {'title': 'Yangın Önleme Stratejileri', 'duration': '20 dk'},
+          {'title': 'Acil Durum Prosedürleri', 'duration': '16 dk'},
+        ];
+      case 'Deprem':
+        return [
+          {'title': 'Deprem Güvenliği Temelleri', 'duration': '20 dk'},
+          {'title': 'Deprem Öncesi Hazırlık', 'duration': '18 dk'},
+          {'title': 'Deprem Anında Yapılacaklar', 'duration': '15 dk'},
+          {'title': 'Deprem Sonrası Müdahale', 'duration': '22 dk'},
+          {'title': 'Aile Acil Durum Planı', 'duration': '16 dk'},
+        ];
+      case 'İlk Yardım':
+        return [
+          {'title': 'Giriş ve Genel İlkeler', 'duration': '25 dk'},
+          {'title': 'Temel Yaşam Desteği', 'duration': '30 dk'},
+          {'title': 'Kanama Kontrolü', 'duration': '20 dk'},
+          {'title': 'Kırık ve Çıkıklar', 'duration': '22 dk'},
+          {'title': 'Zehirlenme Vakaları', 'duration': '18 dk'},
+        ];
+      case 'Su Güvenliği':
+        return [
+          {'title': 'Su Güvenliği Temelleri', 'duration': '12 dk'},
+          {'title': 'Boğulma Önleme', 'duration': '15 dk'},
+          {'title': 'Su Kurtarma Teknikleri', 'duration': '20 dk'},
+          {'title': 'Havuz ve Deniz Güvenliği', 'duration': '14 dk'},
+          {'title': 'Çocuk Su Güvenliği', 'duration': '10 dk'},
+        ];
+      default:
+        return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: const Color(AppConstants.primaryColor),
-        elevation: 0,
-        title: const Text(
-          'Eğitimler',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF003875),
+              Color(0xFF0056B3),
+            ],
           ),
         ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+        child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              _buildHeader(),
-
-              const SizedBox(height: 32),
-
-              // Training Programs
-              _buildTrainingPrograms(),
-
-              const SizedBox(height: 32),
-
-              // Certificates
-              _buildCertificates(),
-
-              const SizedBox(height: 32),
-
-              // Registration Info
-              _buildRegistrationInfo(),
+              _buildHeader(context),
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: _buildContent(),
+                ),
+              ),
             ],
           ),
         ),
@@ -165,82 +129,359 @@ class _EducationScreenState extends State<EducationScreen>
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => context.go('/main'),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.arrow_back, color: Colors.white),
+                  ),
+                ),
+              ),
+              const Expanded(
+                child: Text(
+                  'Eğitimler',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 48),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+                width: 1,
+              ),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.school, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  'Sivil Savunma Eğitim Merkezi',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          _buildProgressOverview(),
+          const SizedBox(height: 24),
+          const Text(
+            'Eğitim Kategorileri',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildCategoryGrid(),
+          const SizedBox(height: 24),
+          _buildQuickStats(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressOverview() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(AppConstants.primaryColor),
-            Color(AppConstants.primaryLightColor),
-          ],
+          colors: [Color(0xFF003875), Color(0xFF0056B3)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.primaryColor).withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: const Color(0xFF003875).withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.school,
-            size: 48,
-            color: Colors.white,
+          const Row(
+            children: [
+              Icon(Icons.trending_up, color: Colors.white, size: 24),
+              SizedBox(width: 12),
+              Text(
+                'Genel İlerleme',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Eğitim Programlarımız',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Sivil savunma, arama kurtarma ve toplumsal hizmet eğitimleri ile toplumu güçlendiriyoruz.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.9),
-              height: 1.4,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: _buildProgressItem('3', '20', 'Tamamlanan\nModül'),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+              Expanded(
+                child: _buildProgressItem('17', '20', 'Kalan\nModül'),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+              Expanded(
+                child: _buildProgressItem('15', '100', 'Başarı\nOranı %'),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTrainingPrograms() {
+  Widget _buildProgressItem(String value, String total, String label) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Eğitim Programları',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text: '/$total',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16),
-        ..._trainingPrograms.map(_buildProgramCard),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.9),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildProgramCard(Map<String, dynamic> program) {
-    final progress = program['enrolled'] / program['capacity'];
-    final isFull = progress >= 1.0;
+  Widget _buildCategoryGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.85,
+      ),
+      itemCount: _categories.length,
+      itemBuilder: (context, index) {
+        final category = _categories[index];
+        return TweenAnimationBuilder<double>(
+          duration: Duration(milliseconds: 400 + (index * 100)),
+          curve: Curves.easeOutCubic,
+          tween: Tween<double>(begin: 0, end: 1),
+          builder: (context, value, child) {
+            return Opacity(
+              opacity: value,
+              child: Transform.translate(
+                offset: Offset(0, 20 * (1 - value)),
+                child: child,
+              ),
+            );
+          },
+          child: _buildCategoryCard(category),
+        );
+      },
+    );
+  }
 
+  Widget _buildCategoryCard(Map<String, dynamic> category) {
+    final progress = category['completedCount'] / category['moduleCount'];
+    
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CategoryModulesScreen(
+                title: category['title'],
+                color: category['color'],
+                icon: category['icon'],
+                description: category['description'],
+                modules: _getModulesForCategory(category['title']),
+                completedModules: {},
+              ),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: category['color'].withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: category['color'].withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  category['icon'],
+                  color: category['color'],
+                  size: 32,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                category['title'],
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                category['description'],
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF64748B),
+                  height: 1.3,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 14,
+                    color: Colors.grey.shade500,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    category['estimatedTime'],
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${category['completedCount']}/${category['moduleCount']} Modül',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${(progress * 100).toInt()}%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: category['color'],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(category['color']),
+                  minHeight: 6,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickStats() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -256,467 +497,87 @@ class _EducationScreenState extends State<EducationScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Row(
+          const Row(
             children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: program['color'].withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  program['icon'],
-                  color: program['color'],
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      program['title'],
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                    Text(
-                      program['description'],
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Program Details
-          Row(
-            children: [
-              _buildDetailChip(Icons.schedule, program['duration']),
-              const SizedBox(width: 8),
-              _buildDetailChip(Icons.trending_up, program['level']),
-              const SizedBox(width: 8),
-              _buildDetailChip(
-                Icons.person,
-                program['instructor'].split(' ')[0],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Schedule and Capacity
-          Row(
-            children: [
-              Expanded(
-                child: _buildInfoRow(Icons.calendar_today, program['schedule']),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${program['enrolled']}/${program['capacity']} Katılımcı',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF64748B),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(program['color']),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Upcoming Session
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(AppConstants.accentColor).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: const Color(AppConstants.accentColor).withValues(alpha: 0.2),
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.event_available,
-                  color: Color(AppConstants.accentColor),
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Sonraki Oturum: ${program['upcoming']}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(AppConstants.accentColor),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Topics
-          const Text(
-            'Konular:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: program['topics'].map<Widget>((topic) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: program['color'].withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  topic,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: program['color'],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 16),
-          // Register Button
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: ElevatedButton(
-              onPressed: isFull
-                  ? null
-                  : () {
-                      // TODO: Register for training
-                      _showRegistrationDialog(program);
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isFull ? Colors.grey : program['color'],
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                isFull ? 'Kontenjan Dolu' : 'Kayıt Ol',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailChip(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: Colors.grey.shade600),
-          const SizedBox(width: 4),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF64748B),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 16,
-          color: const Color(0xFF64748B),
-        ),
-        const SizedBox(width: 4),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF64748B),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCertificates() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Sertifikalarımız',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: _certificates.map((cert) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: cert['color'].withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: cert['color'].withValues(alpha: 0.2),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      cert['icon'],
-                      color: cert['color'],
-                      size: 32,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cert['title'],
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: cert['color'],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            cert['description'],
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF64748B),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Geçerlilik: ${cert['validity']}',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Color(0xFF64748B),
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRegistrationInfo() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(AppConstants.successColor), Color(0xFF059669)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(AppConstants.successColor).withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.contact_support,
-            size: 48,
-            color: Colors.white,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Eğitimlere Kayıt',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Eğitim programlarımız hakkında detaylı bilgi ve kayıt için bizimle iletişime geçin.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: OutlinedButton(
-              onPressed: () {
-                // TODO: Navigate to contact or show contact info
-                _showSnackBar('İletişim bilgileri: info@tulpars.org.tr');
-              },
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.white),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'İletişime Geç',
+              Icon(Icons.insights, color: Color(0xFF003875), size: 24),
+              SizedBox(width: 12),
+              Text(
+                'Hızlı İstatistikler',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0F172A),
                 ),
               ),
-            ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatItem(
+                  '20',
+                  'Toplam Modül',
+                  Icons.library_books,
+                  const Color(0xFF10B981),
+                ),
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  '4',
+                  'Kategori',
+                  Icons.category,
+                  const Color(0xFF3B82F6),
+                ),
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  '9h',
+                  'Toplam Süre',
+                  Icons.schedule,
+                  const Color(0xFFF59E0B),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  void _showRegistrationDialog(Map<String, dynamic> program) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          '${program['title']} Eğitimi',
+  Widget _buildStatItem(String value, String label, IconData icon, Color color) {
+    return Column(
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: Color(AppConstants.primaryColor),
-            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: Color(0xFF64748B),
           ),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              program['icon'],
-              color: program['color'],
-              size: 48,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Bu eğitime kayıt olmak istediğinizden emin misiniz?',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tarih: ${program['upcoming']}\nEğitmen: ${program['instructor']}\nSüre: ${program['duration']}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Color(0xFF64748B),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text('İptal'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.pop();
-              _showSnackBar(
-                '${program['title']} eğitimine kayıt başvurunuz alındı',
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: program['color'],
-            ),
-            child: const Text('Kayıt Ol'),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(AppConstants.successColor),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
+
 }

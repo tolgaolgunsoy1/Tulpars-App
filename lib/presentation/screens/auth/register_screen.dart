@@ -128,7 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     
     final weakPasswords = {
       '12345678', 'password', 'password123', 'qwerty123', 'abc12345',
-      '11111111', '123123123', 'admin123', 'letmein123'
+      '11111111', '123123123', 'admin123', 'letmein123',
     };
     
     if (weakPasswords.contains(password.toLowerCase())) return true;

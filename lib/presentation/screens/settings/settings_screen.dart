@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -8,9 +9,25 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  late Box _settingsBox;
   bool _notificationsEnabled = true;
   bool _darkModeEnabled = false;
-  final String _language = 'Türkçe';
+  String _language = 'Türkçe';
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsBox = Hive.box('settings');
+    _loadSettings();
+  }
+
+  void _loadSettings() {
+    setState(() {
+      _notificationsEnabled = _settingsBox.get('notifications', defaultValue: true);
+      _darkModeEnabled = _settingsBox.get('darkMode', defaultValue: false);
+      _language = _settingsBox.get('language', defaultValue: 'Türkçe');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: _notificationsEnabled,
             onChanged: (value) {
               setState(() => _notificationsEnabled = value);
+              _settingsBox.put('notifications', value);
             },
           ),
           const Divider(),
@@ -37,6 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: _darkModeEnabled,
             onChanged: (value) {
               setState(() => _darkModeEnabled = value);
+              _settingsBox.put('darkMode', value);
             },
           ),
           const Divider(),

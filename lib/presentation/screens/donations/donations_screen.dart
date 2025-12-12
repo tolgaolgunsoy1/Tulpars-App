@@ -164,17 +164,15 @@ class _DonationsScreenState extends State<DonationsScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        // ignore: prefer_const_constructors
         gradient: const LinearGradient(
-          // ignore: prefer_const_literals_to_create_immutables
           colors: [Color(0xFF003875), Color(0xFF0055A5)],
         ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color.fromRGBO(0, 56, 117, 0.3),
+            color: const Color(0xFF003875).withValues(alpha: 0.3),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -200,10 +198,9 @@ class _DonationsScreenState extends State<DonationsScreen>
           Text(
             'Tulpars Derneği\'ne yaptığınız bağışlar\narama-kurtarma operasyonlarını destekliyor',
             textAlign: TextAlign.center,
-            // ignore: unnecessary_const
             style: TextStyle(
               fontSize: 14,
-              color: Color.fromRGBO(255, 255, 255, 0.9),
+              color: Colors.white,
             ),
           ),
         ],
@@ -287,7 +284,7 @@ class _DonationsScreenState extends State<DonationsScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 26 / 255),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 24),
@@ -356,7 +353,7 @@ class _DonationsScreenState extends State<DonationsScreen>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: option['color'].withValues(alpha: 26 / 255),
+                    color: option['color'].withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -469,7 +466,6 @@ class _DonationsScreenState extends State<DonationsScreen>
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // ignore: unnecessary_lambdas
                 _buildContactItem(
                   icon: Icons.phone,
                   title: 'Telefon',
@@ -502,13 +498,12 @@ class _DonationsScreenState extends State<DonationsScreen>
           ),
         ),
         const SizedBox(height: 16),
-        // ignore: prefer_const_constructors, prefer_const_literals_to_create_immutables
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(245, 158, 11, 0.1),
+            color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color.fromRGBO(245, 158, 11, 0.3)),
+            border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
           ),
           child: const Row(
             children: [

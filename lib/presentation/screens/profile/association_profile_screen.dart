@@ -227,7 +227,7 @@ class AssociationProfileScreen extends StatelessWidget {
                   ),
                   subtitle: Text(activity['desc'] as String),
                 ),
-              )),
+              ),),
         ],
       ),
     );
@@ -351,7 +351,7 @@ class AssociationProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            )).toList(),
+            ),).toList(),
           ),
         ],
       ),

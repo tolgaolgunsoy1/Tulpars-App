@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const routeIndexMap = {
       '/main': 0,
       '/news': 1,
-      '/membership': 2,
+      '/education': 2,
       '/sports': 3,
       '/profile': 4,
     };
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Çıkış onayı göster
       final shouldExit = await _showExitConfirmation(context);
       if (shouldExit && context.mounted) {
-        unawaited(SystemNavigator.pop());
+        await SystemNavigator.pop();
       }
     } else {
       // Diğer sayfalarda ana sayfaya dön
@@ -162,12 +162,53 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _handleRefresh() async {
-    // TODO: Implement data refresh logic
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('İçerik güncellendi')),
-      );
+    try {
+      // Simulate data refresh
+      await Future.delayed(const Duration(milliseconds: 1500));
+      
+      if (mounted) {
+        setState(() {
+          // Trigger rebuild to refresh UI
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Text('İçerik başarıyla güncellendi'),
+              ],
+            ),
+            backgroundColor: const Color(0xFF10B981),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Text('Güncelleme başarısız oldu'),
+              ],
+            ),
+            backgroundColor: const Color(0xFFDC2626),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
@@ -177,62 +218,46 @@ class _HomeScreenState extends State<HomeScreen> {
       snap: true,
       backgroundColor: _primaryColor,
       elevation: 0,
-      leading: Builder(
-        builder: (context) => IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () => Scaffold.of(context).openDrawer(),
-          tooltip: 'Menü',
-        ),
-      ),
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Hero(
-            tag: 'app_logo',
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  'assets/images/appstore.png',
-                  width: 20,
-                  height: 20,
-                  errorBuilder: (_, __, ___) => const Icon(
-                    Icons.shield,
-                    color: Colors.white,
-                    size: 20,
+      expandedHeight: 80,
+      automaticallyImplyLeading: false,
+      flexibleSpace: FlexibleSpaceBar(
+        background: SafeArea(
+          child: Container(
+            height: 80,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Drawer Icon
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.white, size: 28),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                    tooltip: 'Menü',
                   ),
                 ),
-              ),
+                // Tulpars Title - Centered
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      'TULPARS',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 3,
+                      ),
+                    ),
+                  ),
+                ),
+                // Right side - only notification
+                _buildNotificationButton(),
+              ],
             ),
           ),
-          const SizedBox(width: 8),
-          const Text(
-            'TULPARS',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ],
-      ),
-      centerTitle: true,
-      actions: [
-        _buildNotificationButton(),
-        IconButton(
-          icon: const Icon(Icons.person_outline, color: Colors.white),
-          onPressed: () => context.go('/profile'),
-          tooltip: 'Profil',
         ),
-        const SizedBox(width: 8),
-      ],
+      ),
     );
   }
 
@@ -405,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildActiveOperations() {
     return _SectionWrapper(
-      title: '🚁 Aktif Operasyonlar',
+      title: 'Aktif Operasyonlar',
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.all(16),
@@ -484,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildUpcomingEvents() {
     return _SectionWrapper(
-      title: '📅 Yaklaşan Etkinlikler',
+      title: 'Yaklaşan Etkinlikler',
       onSeeAll: () => context.go('/events'),
       child: SizedBox(
         height: 180,
@@ -500,7 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildRecentNews() {
     return _SectionWrapper(
-      title: '📰 Son Haberler',
+      title: 'Son Haberler',
       onSeeAll: () => context.go('/news'),
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -600,7 +625,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -629,11 +654,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 isSelected: selectedIndex == 1,
               ),
               _NavItem(
-                icon: Icons.add_circle_outline,
-                selectedIcon: Icons.add_circle,
-                label: 'Katıl',
+                icon: Icons.school_outlined,
+                selectedIcon: Icons.school,
+                label: 'Öğren',
                 index: 2,
-                route: '/membership',
+                route: '/education',
                 isSelected: selectedIndex == 2,
               ),
               _NavItem(
@@ -668,8 +693,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                // Ana Menü Bölümü
+                _buildDrawerSection('ANA MENÜ'),
                 _DrawerItem(
-                  icon: Icons.home,
+                  icon: Icons.home_outlined,
                   title: 'Ana Sayfa',
                   onTap: () {
                     Navigator.pop(context);
@@ -677,7 +704,61 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.info,
+                  icon: Icons.emergency_outlined,
+                  title: 'Acil Durum',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/emergency');
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.article_outlined,
+                  title: 'Haberler',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/news');
+                  },
+                ),
+                
+                // Hizmetler Bölümü
+                _buildDrawerSection('HİZMETLERİMİZ'),
+                _DrawerItem(
+                  icon: Icons.search_outlined,
+                  title: 'Arama Kurtarma',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/operations');
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.school_outlined,
+                  title: 'Eğitim Programları',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/education');
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.sports_basketball_outlined,
+                  title: 'Gençlik Spor Kulübü',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/sports');
+                  },
+                ),
+                _DrawerItem(
+                  icon: Icons.volunteer_activism_outlined,
+                  title: 'Bağış & Destek',
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/donations');
+                  },
+                ),
+                
+                // Kurumsal Bölümü
+                _buildDrawerSection('KURUMSAL'),
+                _DrawerItem(
+                  icon: Icons.info_outline,
                   title: 'Hakkımızda',
                   onTap: () {
                     Navigator.pop(context);
@@ -685,39 +766,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.emergency,
-                  title: 'Operasyonlar',
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go('/operations');
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.article,
-                  title: 'Haberler',
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go('/news');
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.sports,
-                  title: 'Spor Kulübü',
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go('/sports');
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.school,
-                  title: 'Eğitimler',
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go('/education');
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.photo,
+                  icon: Icons.photo_library_outlined,
                   title: 'Galeri',
                   onTap: () {
                     Navigator.pop(context);
@@ -725,51 +774,59 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.volunteer_activism,
-                  title: 'Bağış Yap',
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go('/donations');
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.people,
-                  title: 'Destekçiler',
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go('/supporters');
-                  },
-                ),
-                _DrawerItem(
-                  icon: Icons.phone,
+                  icon: Icons.phone_outlined,
                   title: 'İletişim',
                   onTap: () {
                     Navigator.pop(context);
                     context.go('/contact');
                   },
                 ),
+                
+                const Divider(height: 32),
+                
+                // Alt Menü
                 _DrawerItem(
-                  icon: Icons.help,
-                  title: 'SSS',
+                  icon: Icons.help_outline,
+                  title: 'Yardım & SSS',
                   onTap: () {
                     Navigator.pop(context);
                     context.go('/faq');
                   },
                 ),
-                const Divider(),
                 _DrawerItem(
-                  icon: Icons.settings,
+                  icon: Icons.settings_outlined,
                   title: 'Ayarlar',
                   onTap: () {
                     Navigator.pop(context);
                     context.go('/settings');
                   },
                 ),
-                _DrawerItem(
-                  icon: Icons.logout,
-                  title: 'Çıkış Yap',
-                  textColor: _errorColor,
-                  onTap: () => _handleLogout(context),
+                
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+          // Alt kısım - Versiyon bilgisi
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                const Divider(),
+                const SizedBox(height: 8),
+                Text(
+                  'Tulpars Derneği v1.0.0',
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Sivil Savunma & Arama Kurtarma',
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
@@ -778,10 +835,25 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  
+  Widget _buildDrawerSection(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade600,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
 
   Widget _buildDrawerHeader() {
     return Container(
-      height: 200,
+      height: 220,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [_primaryColor, _secondaryColor],
@@ -791,44 +863,69 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const CircleAvatar(
-                radius: 35,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, size: 40, color: _primaryColor),
+              // Profile Avatar with better styling
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 40, color: _primaryColor),
+                ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
+              // User name - dynamic or guest
               const Text(
-                'Ahmet Yılmaz',
+                'Misafir Kullanıcı',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4),
               const Text(
-                'ahmet@email.com',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                'Giriş yapmadınız',
+                style: TextStyle(
+                  color: Colors.white70, 
+                  fontSize: 14,
+                ),
               ),
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  context.go('/profile');
-                },
-                icon: const Icon(Icons.edit, size: 16),
-                label: const Text('Profili Düzenle'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: const BorderSide(color: Colors.white),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
+              const SizedBox(height: 12),
+              // Login/Profile button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context.go('/auth/login');
+                  },
+                  icon: const Icon(Icons.login, size: 18),
+                  label: const Text('Giriş Yap'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.white, width: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ),
@@ -839,34 +936,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _handleLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Çıkış Yap'),
-        content: const Text('Çıkış yapmak istediğinizden emin misiniz?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context); // Close drawer
-              // TODO: Implement logout logic
-              context.go('/login');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _errorColor,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Çıkış Yap'),
-          ),
-        ],
-      ),
-    );
-  }
+
 }
 
 // Reusable Components
@@ -1335,28 +1405,46 @@ class _DrawerItem extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.textColor,
+    this.isSelected = false,
   });
 
   final IconData icon;
   final String title;
   final VoidCallback onTap;
   final Color? textColor;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: textColor ?? const Color(0xFF003875),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(color: textColor),
-      ),
-      onTap: onTap,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+    final color = textColor ?? const Color(0xFF003875);
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: color,
+          size: 22,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: color,
+            fontSize: 15,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+        onTap: onTap,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        dense: true,
+        visualDensity: VisualDensity.compact,
+        hoverColor: color.withValues(alpha: 0.1),
+        splashColor: color.withValues(alpha: 0.2),
       ),
     );
   }
 }
+

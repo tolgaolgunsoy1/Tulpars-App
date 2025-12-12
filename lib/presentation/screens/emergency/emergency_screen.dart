@@ -92,10 +92,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
 
               const SizedBox(height: 32),
 
-              // Emergency Contacts
-              _buildEmergencyContacts(),
 
-              const SizedBox(height: 32),
 
               // Emergency Procedures
               _buildEmergencyProcedures(),
@@ -115,45 +112,101 @@ class _EmergencyScreenState extends State<EmergencyScreen>
 
   Widget _buildEmergencyBanner() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      width: double.infinity,
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFDC2626).withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: const Color(0xFFDC2626).withValues(alpha: 0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(
-            Icons.warning_amber_rounded,
-            size: 48,
+            Icons.emergency,
+            size: 64,
             color: Colors.white,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           const Text(
-            'Acil Durumda\nHemen Yardım İsteyin',
+            'TÜRKİYE ACİL DURUM',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.white,
-              height: 1.3,
+              letterSpacing: 1.5,
             ),
           ),
           const SizedBox(height: 8),
+          const Text(
+            'TEK NUMARA',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Big 112 Call Button - Centered
+          Center(
+            child: InkWell(
+              onTap: () => _makePhoneCall('112'),
+              borderRadius: BorderRadius.circular(60),
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.phone,
+                      size: 36,
+                      color: Color(0xFFDC2626),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '112',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFFDC2626),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
           Text(
-            'Yaşamınızı tehdit eden durumlarda\n112\'yi arayın',
+            'Polis • İtfaiye • Sağlık • AFAD\nTüm acil servisler tek numarada',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withValues(alpha: 0.9),
+              height: 1.4,
             ),
           ),
         ],
@@ -162,124 +215,39 @@ class _EmergencyScreenState extends State<EmergencyScreen>
   }
 
   Widget _buildQuickActions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        const Text(
-          'Hızlı Erişim',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A),
+        Expanded(
+          child: _buildInfoButton(
+            icon: Icons.emergency,
+            label: 'Tulpars\nAcil',
+            color: const Color(0xFF003875),
+            onTap: () => _makePhoneCall(AppConstants.tulparsEmergency),
           ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildEmergencyButton(
-                icon: Icons.local_police,
-                label: 'Polis\n155',
-                color: const Color(0xFF1E40AF),
-                phoneNumber: AppConstants.policeNumber,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildEmergencyButton(
-                icon: Icons.local_fire_department,
-                label: 'İtfaiye\n110',
-                color: const Color(0xFFDC2626),
-                phoneNumber: AppConstants.fireNumber,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildEmergencyButton(
-                icon: Icons.local_hospital,
-                label: 'Acil\n112',
-                color: const Color(0xFF059669),
-                phoneNumber: AppConstants.emergencyNumber,
-              ),
-            ),
-          ],
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildInfoButton(
+            icon: Icons.info_outline,
+            label: 'Acil\nRehberi',
+            color: const Color(0xFFF59E0B),
+            onTap: _showEmergencyGuide,
+          ),
         ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildEmergencyButton(
-                icon: Icons.emergency,
-                label: 'Tulpars\nAcil',
-                color: const Color(0xFF003875),
-                phoneNumber: AppConstants.tulparsEmergency,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildInfoButton(
-                icon: Icons.info_outline,
-                label: 'Acil\nRehberi',
-                color: const Color(0xFFF59E0B),
-                onTap: _showEmergencyGuide,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildInfoButton(
-                icon: Icons.location_on,
-                label: 'En Yakın\nMerkez',
-                color: const Color(0xFF10B981),
-                onTap: _showNearestCenter,
-              ),
-            ),
-          ],
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildInfoButton(
+            icon: Icons.location_on,
+            label: 'En Yakın\nMerkez',
+            color: const Color(0xFF10B981),
+            onTap: _showNearestCenter,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildEmergencyButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required String phoneNumber,
-  }) {
-    return InkWell(
-      onTap: () => _makePhoneCall(phoneNumber),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white, size: 28),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                height: 1.2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildInfoButton({
     required IconData icon,
@@ -324,106 +292,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
     );
   }
 
-  Widget _buildEmergencyContacts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Önemli Telefon Numaraları',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF0F172A),
-          ),
-        ),
-        const SizedBox(height: 16),
-        _buildContactCard(
-          title: 'Tulpars Arama Kurtarma',
-          phone: AppConstants.tulparsEmergency,
-          description: '7/24 acil arama kurtarma desteği',
-          icon: Icons.emergency,
-        ),
-        const SizedBox(height: 12),
-        _buildContactCard(
-          title: 'AFAD (afet yönetimi)',
-          phone: '122',
-          description: 'Doğal afet ve acil durum koordinasyonu',
-          icon: Icons.warning,
-        ),
-        const SizedBox(height: 12),
-        _buildContactCard(
-          title: 'Orman Yangını',
-          phone: '177',
-          description: 'Orman ve doğal alan yangınları',
-          icon: Icons.local_fire_department,
-        ),
-      ],
-    );
-  }
 
-  Widget _buildContactCard({
-    required String title,
-    required String phone,
-    required String description,
-    required IconData icon,
-  }) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF003875).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: const Color(0xFF003875), size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    phone,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF003875),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.phone, color: Color(0xFF003875)),
-              onPressed: () => _makePhoneCall(phone),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildEmergencyProcedures() {
     return Column(
@@ -625,8 +494,8 @@ class _EmergencyScreenState extends State<EmergencyScreen>
                   controller: scrollController,
                   children: const [
                     Text(
-                      'Bu rehber temel acil durum prosedürlerini içerir. '
-                      'Daha detaylı bilgi için Tulpars Derneği\'ne başvurun.',
+                      '112 Türkiye\'nin birleşik acil durum numarasıdır. '
+                      'Tüm acil durumlar için tek numara kullanın.',
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0xFF6B7280),
@@ -635,7 +504,7 @@ class _EmergencyScreenState extends State<EmergencyScreen>
                     ),
                     SizedBox(height: 24),
                     Text(
-                      '📋 Temel İlkeler:',
+                      '112\'yi Ne Zaman Arayın:',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -644,10 +513,33 @@ class _EmergencyScreenState extends State<EmergencyScreen>
                     ),
                     SizedBox(height: 12),
                     Text(
-                      '• Sakin kalmak en önemlidir\n'
-                      '• Yardım isteyin ve talimatları takip edin\n'
-                      '• Başkalarına yardım etmeye çalışın\n'
-                      '• Güvenli bir yere gidin',
+                      '• Yaşamı tehdit eden durumlar\n'
+                      '• Yangın, kaza, suç durumları\n'
+                      '• Doğal afetler (deprem, sel vb.)\n'
+                      '• Acil tıbbi müdahale gereken durumlar\n'
+                      '• Arama-kurtarma gereken durumlar',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF374151),
+                        height: 1.6,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Arama Sırasında:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      '• Sakin olun ve net konuşun\n'
+                      '• Konumunuzu tam olarak belirtin\n'
+                      '• Durumu kısaca açıklayın\n'
+                      '• Operatörün sorularını yanıtlayın\n'
+                      '• Talimatları dikkatle dinleyin',
                       style: TextStyle(
                         fontSize: 14,
                         color: Color(0xFF374151),

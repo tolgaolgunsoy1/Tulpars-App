@@ -338,19 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   void _shareProfile() {
-    final profileText = '''
-🌟 Profilimi Keşfet!
-
-👤 ${_userData['name']} ${_userData['surname']}
-📅 Üyelik: ${_userData['memberSince']}
-🔍 Operasyon: ${_userData['operationsParticipated']}
-🎓 Eğitim: ${_userData['trainingsCompleted']}
-💰 Toplam Bağış: ${_userData['totalDonations']}
-
-Tulpars Derneği ile tanışın!
-''';
-
-    Share.share(profileText);
+    // Share profile functionality disabled
   }
 
   void _saveProfile() async {
@@ -526,7 +514,7 @@ Tulpars Derneği ile tanışın!
       setState(() {
         _profileImage = File(image.path);
       });
-      unawaited(_avatarAnimationController.forward(from: 0));
+      _avatarAnimationController.forward(from: 0);
       _showSuccessSnackBar('Profil fotoğrafı güncellendi');
     }
   }

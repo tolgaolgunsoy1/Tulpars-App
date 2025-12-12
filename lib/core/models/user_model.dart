@@ -1,15 +1,6 @@
 import 'user_role.dart';
 
 class UserModel {
-  final String id;
-  final String email;
-  final String? displayName;
-  final String? photoUrl;
-  final UserRole role;
-  final DateTime createdAt;
-  final DateTime? expiresAt;
-  final bool isActive;
-  final Map<String, dynamic>? metadata;
 
   const UserModel({
     required this.id,
@@ -22,20 +13,6 @@ class UserModel {
     this.isActive = true,
     this.metadata,
   });
-
-  bool get isExpired {
-    if (expiresAt == null) return false;
-    return DateTime.now().isAfter(expiresAt!);
-  }
-
-  bool get isDemo => metadata?['isDemo'] == true;
-
-  bool hasPermission(Permission permission) {
-    if (!isActive || isExpired) return false;
-    return RolePermissions.hasPermission(role, permission);
-  }
-
-  List<Permission> get permissions => RolePermissions.getPermissions(role);
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -55,6 +32,29 @@ class UserModel {
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
   }
+  final String id;
+  final String email;
+  final String? displayName;
+  final String? photoUrl;
+  final UserRole role;
+  final DateTime createdAt;
+  final DateTime? expiresAt;
+  final bool isActive;
+  final Map<String, dynamic>? metadata;
+
+  bool get isExpired {
+    if (expiresAt == null) return false;
+    return DateTime.now().isAfter(expiresAt!);
+  }
+
+  bool get isDemo => metadata?['isDemo'] == true;
+
+  bool hasPermission(Permission permission) {
+    if (!isActive || isExpired) return false;
+    return RolePermissions.hasPermission(role, permission);
+  }
+
+  List<Permission> get permissions => RolePermissions.getPermissions(role);
 
   Map<String, dynamic> toJson() {
     return {

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'profile_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ProfileWrapper extends StatelessWidget {
   const ProfileWrapper({super.key});
@@ -14,10 +14,9 @@ class ProfileWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Get actual auth state from AuthBloc
-    final isLoggedIn = false; // Simulated
-    final isGuest = true; // Simulated
-    final isDemoAdmin = false; // Simulated
+    final userBox = Hive.box('user_data');
+    final isLoggedIn = userBox.get('isLoggedIn', defaultValue: false);
+    final isAdmin = userBox.get('isAdmin', defaultValue: false);
 
     if (!isLoggedIn) {
       return Scaffold(
@@ -78,18 +77,88 @@ class ProfileWrapper extends StatelessWidget {
       );
     }
 
-    // If guest, show guest profile with random name
-    if (isGuest) {
-      return _GuestProfileScreen(guestName: _generateGuestName());
+    if (isAdmin) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Admin Profili'),
+          backgroundColor: const Color(0xFF003875),
+          foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.admin_panel_settings),
+              onPressed: () => context.go('/admin'),
+            ),
+          ],
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.admin_panel_settings,
+                size: 100,
+                color: Color(0xFF003875),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Admin Paneli',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.security, size: 16, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text(
+                      'Yönetici Yetkileri',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () => context.go('/admin'),
+                icon: const Icon(Icons.dashboard),
+                label: const Text('Admin Paneline Git'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF003875),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  await userBox.clear();
+                  context.go('/login');
+                },
+                icon: const Icon(Icons.logout),
+                label: const Text('Çıkış Yap'),
+              ),
+            ],
+          ),
+        ),
+      );
     }
-
-    // If demo admin, show full profile
-    if (isDemoAdmin) {
-      return const ProfileScreen(); // Full profile for demo admin
-    }
-
-    // Regular logged-in user
-    return const ProfileScreen();
+    
+    return _GuestProfileScreen(guestName: _generateGuestName());
   }
 }
 

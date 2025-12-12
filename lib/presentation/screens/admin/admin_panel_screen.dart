@@ -198,7 +198,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
-        ..._users.map((user) => _buildUserCard(user)),
+        ..._users.map(_buildUserCard),
       ],
     );
   }

@@ -207,7 +207,6 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
   void _shareNews(Map<String, dynamic> news) {
     Share.share(
       '${news['title']}\n\n${news['summary']}\n\nHaberi okumak için: ${AppConstants.websiteUrl}',
-      subject: news['title'],
     );
   }
 

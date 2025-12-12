@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../../../core/constants/app_constants.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -14,208 +12,216 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  // Onboarding sayfaları
-  final List<OnboardingPage> _pages = [
-    const OnboardingPage(
-      title: 'Tulpars\'a Hoş Geldiniz',
-      description:
-          'Sivil savunma, arama-kurtarma ve sosyal dayanışma için buradayız. Acil durumlarda topluma hizmet etmek için eğitimli gönüllülerimizle çalışıyoruz.',
+  final List<OnboardingData> _pages = [
+    OnboardingData(
+      title: "Acil Durum Yönetimi",
+      description: "7/24 acil durum ihbar sistemi ile anında yardım alın. Konum tabanlı hizmetlerle en yakın ekiplerimiz size ulaşır.",
       icon: Icons.emergency,
-      color: Color(AppConstants.primaryColor),
+      color: const Color(0xFF0055AA),
     ),
-    const OnboardingPage(
-      title: 'Birlikte Daha Güçlüyüz',
-      description:
-          'Eğitimler, spor faaliyetleri, operasyonlar ve sosyal sorumluluk projeleri ile topluma değer katıyoruz.',
-      icon: Icons.group,
-      color: Color(AppConstants.primaryLightColor),
+    OnboardingData(
+      title: "Arama Kurtarma",
+      description: "Profesyonel arama kurtarma ekiplerimiz ile kayıp kişileri bulma ve kurtarma operasyonları gerçekleştiriyoruz.",
+      icon: Icons.search,
+      color: const Color(0xFF003875),
     ),
-    const OnboardingPage(
-      title: 'Siz de Aramıza Katılın',
-      description:
-          'Gönüllü ol, bağış yap veya etkinliklerimizi takip et. Her katkı değerlidir ve fark yaratır.',
-      icon: Icons.volunteer_activism,
-      color: Color(AppConstants.accentColor),
+    OnboardingData(
+      title: "Eğitim Programları",
+      description: "İlk yardım, afet hazırlığı ve sivil savunma konularında kapsamlı eğitim programlarımıza katılın.",
+      icon: Icons.school,
+      color: const Color(0xFF1976D2),
+    ),
+    OnboardingData(
+      title: "Gençlik Spor Kulübü",
+      description: "Gençlerimizin fiziksel ve mental gelişimi için spor aktiviteleri ve yarışmalar düzenliyoruz.",
+      icon: Icons.sports,
+      color: const Color(0xFF0055AA),
+    ),
+    OnboardingData(
+      title: "Sosyal Dayanışma",
+      description: "Toplumsal dayanışmayı güçlendiren projeler ve yardım kampanyaları ile birlikte hareket ediyoruz.",
+      icon: Icons.favorite,
+      color: const Color(0xFF003875),
     ),
   ];
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _onPageChanged(int page) {
-    setState(() {
-      _currentPage = page;
-    });
-  }
-
-  void _navigateToLogin() async {
-    // SharedPreferences'a ilk açılış kaydedilecek
-    final settingsBox = await Hive.openBox('settings');
-    await settingsBox.put('onboarding_completed', true);
-
-    if (mounted) {
-      context.go('/auth');
-    }
-  }
-
-  void _nextPage() {
-    if (_currentPage < _pages.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      _navigateToLogin();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Üst kısım - Atla butonu
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(width: 60), // Boşluk için
-                  // Tulpars logo/text
-                  const Text(
-                    'TULPARS',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF003875),
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  // Atla butonu
-                  TextButton(
-                    onPressed: _navigateToLogin,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF003875), Color(0xFF0055AA)],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Skip Button
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: TextButton(
+                    onPressed: () => context.go('/login'),
                     child: const Text(
-                      'Atla',
-                      style: TextStyle(fontSize: 16, color: Color(0xFF64748B)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // PageView - Swipe edilebilir sayfalar
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  return _buildPage(_pages[index]);
-                },
-              ),
-            ),
-            // Alt kısım - Göstergeler ve buton
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  // Sayfa göstergeleri (dots)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _pages.length,
-                      _buildDot,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  // İleri/Başla butonu
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: _nextPage,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _pages[_currentPage].color,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 0,
+                      'Geç',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _currentPage == _pages.length - 1
-                                ? 'Başla'
-                                : 'İleri',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              
+              // PageView
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  },
+                  itemCount: _pages.length,
+                  itemBuilder: (context, index) {
+                    return _buildPage(_pages[index]);
+                  },
+                ),
+              ),
+              
+              // Page Indicator
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  _pages.length,
+                  (index) => _buildDot(index),
+                ),
+              ),
+              
+              const SizedBox(height: 30),
+              
+              // Navigation Buttons
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Previous Button
+                    _currentPage > 0
+                        ? TextButton(
+                            onPressed: () {
+                              _pageController.previousPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                            child: const Text(
+                              'Geri',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            _currentPage == _pages.length - 1
-                                ? Icons.check_circle_outline
-                                : Icons.arrow_forward,
-                            size: 24,
-                          ),
-                        ],
+                          )
+                        : const SizedBox(width: 60),
+                    
+                    // Next/Finish Button
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_currentPage < _pages.length - 1) {
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        } else {
+                          context.go('/login');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0055AA),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 15,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: Text(
+                        _currentPage < _pages.length - 1 ? 'İleri' : 'Başla',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+              
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPage(OnboardingPage page) {
+  Widget _buildPage(OnboardingData data) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.all(40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // İkon/Görsel alanı
+          // Icon
           Container(
-            width: 200,
-            height: 200,
+            width: 120,
+            height: 120,
             decoration: BoxDecoration(
-              color: page.color.withValues(alpha: 0.1),
+              color: Colors.white.withOpacity(0.2),
               shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 2,
+              ),
             ),
-            child: Icon(page.icon, size: 100, color: page.color),
+            child: Icon(
+              data.icon,
+              size: 60,
+              color: Colors.white,
+            ),
           ),
-          const SizedBox(height: 48),
-          // Başlık
+          
+          const SizedBox(height: 40),
+          
+          // Title
           Text(
-            page.title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
+            data.title,
+            style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: page.color,
-              height: 1.2,
+              color: Colors.white,
             ),
-          ),
-          const SizedBox(height: 24),
-          // Açıklama
-          Text(
-            page.description,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Description
+          Text(
+            data.description,
+            style: TextStyle(
               fontSize: 16,
-              color: Color(0xFF64748B),
-              height: 1.6,
+              color: Colors.white.withOpacity(0.9),
+              height: 1.5,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -223,31 +229,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildDot(int index) {
-    final isActive = _currentPage == index;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: isActive ? 32 : 8,
+      width: _currentPage == index ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? _pages[_currentPage].color : const Color(0xFFCBD5E1),
+        color: _currentPage == index
+            ? Colors.white
+            : Colors.white.withOpacity(0.4),
         borderRadius: BorderRadius.circular(4),
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 }
 
-// Onboarding sayfa modeli
-class OnboardingPage {
-  const OnboardingPage({
+class OnboardingData {
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+
+  OnboardingData({
     required this.title,
     required this.description,
     required this.icon,
     required this.color,
   });
-
-  final String title;
-  final String description;
-  final IconData icon;
-  final Color color;
 }

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class NavigationService {
-  static final NavigationService _instance = NavigationService._internal();
   factory NavigationService() => _instance;
   NavigationService._internal();
+  static final NavigationService _instance = NavigationService._internal();
 
   /// Safe back navigation with fallback
   static void goBack(BuildContext context, {String? fallbackRoute}) {
