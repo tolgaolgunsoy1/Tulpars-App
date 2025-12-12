@@ -203,8 +203,7 @@ class _TulparsAppState extends State<TulparsApp> with WidgetsBindingObserver {
         child: MaterialApp.router(
           title: 'Tulpars Derneği',
           theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.system,
+          themeMode: ThemeMode.light,
           routerConfig: _router,
           debugShowCheckedModeBanner: false,
           locale: const Locale('tr', 'TR'),
