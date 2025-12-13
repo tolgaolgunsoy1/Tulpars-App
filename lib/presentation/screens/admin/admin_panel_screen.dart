@@ -4,6 +4,8 @@ import '../../../core/models/user_role.dart';
 import '../../../core/services/user_service.dart';
 import '../../../core/models/event_model.dart';
 import '../../../core/services/event_service.dart';
+import '../../../core/models/news_model.dart';
+import '../../../core/services/news_service.dart';
 
 class AdminPanelScreen extends StatefulWidget {
   const AdminPanelScreen({super.key});
@@ -56,6 +58,8 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                 _buildDemoAdminCard(),
                 const SizedBox(height: 24),
                 _buildEventManagementCard(),
+                const SizedBox(height: 16),
+                _buildNewsManagementCard(),
                 const SizedBox(height: 16),
                 _buildUserManagementCard(),
                 const SizedBox(height: 16),
@@ -235,6 +239,270 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNewsManagementCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.article, color: Color(0xFF003875)),
+                SizedBox(width: 8),
+                Text(
+                  'Haber Yönetimi',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Yeni haber ekle, mevcut haberleri düzenle',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showAddNewsDialog(),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Yeni Haber'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF003875),
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showNewsListDialog(),
+                    icon: const Icon(Icons.list),
+                    label: const Text('Haberleri Gör'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF003875),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddNewsDialog() {
+    final titleController = TextEditingController();
+    final contentController = TextEditingController();
+    final authorController = TextEditingController(text: 'Tulpars Derneği');
+    String selectedCategory = 'Genel';
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Yeni Haber Ekle'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Haber Başlığı',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: contentController,
+                  maxLines: 5,
+                  decoration: const InputDecoration(
+                    labelText: 'İçerik',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: selectedCategory,
+                  decoration: const InputDecoration(
+                    labelText: 'Kategori',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: ['Genel', 'Arama-Kurtarma', 'Eğitim', 'Tatbikat', 'Sosyal']
+                      .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                      .toList(),
+                  onChanged: (value) => setState(() => selectedCategory = value!),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: authorController,
+                  decoration: const InputDecoration(
+                    labelText: 'Yazar',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
+                  final news = NewsModel(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    title: titleController.text,
+                    content: contentController.text,
+                    category: selectedCategory,
+                    author: authorController.text,
+                    publishDate: DateTime.now(),
+                    createdAt: DateTime.now(),
+                  );
+                  
+                  final success = await NewsService.addNews(news);
+                  Navigator.pop(context);
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(success ? 'Haber eklendi!' : 'Hata oluştu'),
+                      backgroundColor: success ? Colors.green : Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text('Ekle'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showNewsListDialog() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'Haber Listesi',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: const Color(0xFF003875),
+            foregroundColor: Colors.white,
+          ),
+          body: FutureBuilder<List<NewsModel>>(
+            future: NewsService.getNews(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              
+              final newsList = snapshot.data ?? [];
+              
+              if (newsList.isEmpty) {
+                return const Center(
+                  child: Text('Henüz haber yok'),
+                );
+              }
+              
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: newsList.length,
+                itemBuilder: (context, index) {
+                  final news = newsList[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: ListTile(
+                      title: Text(
+                        news.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(news.shortContent),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF003875).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  news.category,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Color(0xFF003875),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                news.timeAgo,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete, color: Colors.red),
+                                SizedBox(width: 8),
+                                Text('Sil'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onSelected: (value) async {
+                          if (value == 'delete') {
+                            final success = await NewsService.deleteNews(news.id);
+                            if (success) {
+                              Navigator.pop(context);
+                              _showNewsListDialog(); // Refresh
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Haber silindi'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );

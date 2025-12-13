@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/connectivity_service.dart';
+import '../../../core/models/news_model.dart';
+import '../../../core/services/news_service.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -36,8 +38,11 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
     'Faaliyetler',
   ];
 
-  // Mock data - replace with actual data from Firebase
-  final List<Map<String, dynamic>> _newsList = [
+  List<NewsModel> _newsList = [];
+  bool _isLoading = true;
+
+  // Keep mock data structure for compatibility
+  final List<Map<String, dynamic>> _mockNewsList = [
     {
       'id': '1',
       'title': 'Tulpars Arama Kurtarma Timi\'nden Başarılı Operasyon',
@@ -125,22 +130,13 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
     },
   ];
 
-  List<Map<String, dynamic>> get _filteredNews {
+  List<NewsModel> get _filteredNews {
     return _newsList.where((news) {
       final matchesCategory =
-          _selectedCategory == 'Tümü' || news['category'] == _selectedCategory;
+          _selectedCategory == 'Tümü' || news.category == _selectedCategory;
       final matchesSearch = _searchQuery.isEmpty ||
-          news['title'].toString().toLowerCase().contains(
-                _searchQuery.toLowerCase(),
-              ) ||
-          news['summary'].toString().toLowerCase().contains(
-                _searchQuery.toLowerCase(),
-              ) ||
-          news['tags'].any(
-            (tag) => tag.toString().toLowerCase().contains(
-                  _searchQuery.toLowerCase(),
-                ),
-          );
+          news.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          news.content.toLowerCase().contains(_searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     }).toList();
   }
@@ -170,6 +166,9 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
         });
       }
     });
+    
+    // Load news data
+    _loadNews();
   }
 
   @override
@@ -196,33 +195,37 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
     });
   }
 
-  void _toggleFavorite(String newsId) {
-    setState(() {
-      final news = _newsList.firstWhere((item) => item['id'] == newsId);
-      news['isFavorite'] = !news['isFavorite'];
-    });
-    // TODO: Update favorite status in backend
-  }
-
-  void _shareNews(Map<String, dynamic> news) {
+  void _shareNews(NewsModel news) {
     Share.share(
-      '${news['title']}\n\n${news['summary']}\n\nHaberi okumak için: ${AppConstants.websiteUrl}',
+      '${news.title}\n\n${news.shortContent}\n\nHaberi okumak için: ${AppConstants.websiteUrl}',
     );
   }
 
-  void _openNewsDetail(Map<String, dynamic> news) {
+  void _openNewsDetail(NewsModel news) {
     // TODO: Navigate to news detail screen
-    debugPrint('Open news detail: ${news['id']}');
+    debugPrint('Open news detail: ${news.id}');
   }
 
-  void _openComments(Map<String, dynamic> news) {
+  void _openComments(NewsModel news) {
     // TODO: Open comments modal or navigate to comments screen
-    debugPrint('Open comments for news: ${news['id']}');
+    debugPrint('Open comments for news: ${news.id}');
+  }
+
+  Future<void> _loadNews() async {
+    setState(() => _isLoading = true);
+    try {
+      final news = await NewsService.getNews();
+      setState(() {
+        _newsList = news;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _refreshNews() async {
-    // TODO: Fetch latest news from backend
-    await Future.delayed(const Duration(seconds: 2));
+    await _loadNews();
   }
 
   @override
@@ -292,9 +295,11 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
       ),
       body: RefreshIndicator(
         onRefresh: _refreshNews,
-        child: _filteredNews.isEmpty
-            ? _buildEmptyState()
-            : CustomScrollView(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _filteredNews.isEmpty
+                ? _buildEmptyState()
+                : CustomScrollView(
                 controller: _scrollController,
                 slivers: [
                   if (_selectedCategory == 'Tümü' && _searchQuery.isEmpty)
@@ -387,7 +392,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
     return 'Farklı kategoriler deneyin';
   }
 
-  Widget _buildNewsCard(Map<String, dynamic> news) {
+  Widget _buildNewsCard(NewsModel news) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -399,36 +404,46 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // News Image
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-              child: Image.network(
-                news['image'],
+            if (news.imageUrl.isNotEmpty)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
+                child: Image.network(
+                  news.imageUrl,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 180,
+                      color: Colors.grey.shade200,
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              Container(
                 height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    height: 180,
-                    color: Colors.grey.shade200,
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 180,
-                    color: Colors.grey.shade200,
-                    child: const Icon(
-                      Icons.image_not_supported,
-                      size: 50,
-                      color: Colors.grey,
-                    ),
-                  );
-                },
+                decoration: BoxDecoration(
+                  color: _getCategoryColor(news.category).withValues(alpha: 0.1),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.article,
+                    size: 60,
+                    color: _getCategoryColor(news.category),
+                  ),
+                ),
               ),
-            ),
             // Content
             Padding(
               padding: const EdgeInsets.all(16),
@@ -442,11 +457,11 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: _getCategoryColor(news['category']),
+                      color: _getCategoryColor(news.category),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      news['category'],
+                      news.category,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -457,7 +472,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                   const SizedBox(height: 8),
                   // Title
                   Text(
-                    news['title'],
+                    news.title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -470,7 +485,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                   const SizedBox(height: 8),
                   // Summary
                   Text(
-                    news['summary'],
+                    news.shortContent,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade600,
@@ -490,7 +505,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        news['author'],
+                        news.author,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade600,
@@ -504,7 +519,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${news['readTime']} okuma',
+                        news.timeAgo,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade600,
@@ -517,7 +532,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                   Row(
                     children: [
                       Text(
-                        _formatDate(news['date']),
+                        _formatDate(news.publishDate),
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade500,
@@ -533,7 +548,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${news['viewCount']}',
+                            '${news.viewCount}',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,
@@ -555,10 +570,10 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                           size: 18,
                           color: Colors.grey.shade600,
                         ),
-                        label: Text(
-                          '${news['commentCount']}',
+                        label: const Text(
+                          '0',
                           style: TextStyle(
-                            color: Colors.grey.shade600,
+                            color: Colors.grey,
                             fontSize: 14,
                           ),
                         ),
@@ -570,18 +585,12 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
 
                       // Favorite
                       IconButton(
-                        onPressed: () => _toggleFavorite(news['id']),
+                        onPressed: () {},
                         icon: Icon(
-                          news['isFavorite']
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: news['isFavorite']
-                              ? Colors.red
-                              : Colors.grey.shade600,
+                          Icons.favorite_border,
+                          color: Colors.grey.shade600,
                         ),
-                        tooltip: news['isFavorite']
-                            ? 'Favorilerden çıkar'
-                            : 'Favorilere ekle',
+                        tooltip: 'Favorilere ekle',
                       ),
                       // Share
                       IconButton(
@@ -597,7 +606,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                         onPressed: () {
                           // TODO: Toggle notifications for this news
                           debugPrint(
-                            'Toggle notifications for news: ${news['id']}',
+                            'Toggle notifications for news: ${news.id}',
                           );
                         },
                         icon: Icon(
@@ -683,7 +692,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTrendingCard(Map<String, dynamic> news) {
+  Widget _buildTrendingCard(NewsModel news) {
     return Container(
       width: 280,
       margin: const EdgeInsets.only(right: 12),
@@ -697,12 +706,35 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  news['image'],
-                  height: 200,
-                  width: 280,
-                  fit: BoxFit.cover,
-                ),
+                child: news.imageUrl.isNotEmpty
+                    ? Image.network(
+                        news.imageUrl,
+                        height: 200,
+                        width: 280,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 200,
+                            width: 280,
+                            color: _getCategoryColor(news.category).withValues(alpha: 0.3),
+                            child: Icon(
+                              Icons.article,
+                              size: 60,
+                              color: _getCategoryColor(news.category),
+                            ),
+                          );
+                        },
+                      )
+                    : Container(
+                        height: 200,
+                        width: 280,
+                        color: _getCategoryColor(news.category).withValues(alpha: 0.3),
+                        child: Icon(
+                          Icons.article,
+                          size: 60,
+                          color: _getCategoryColor(news.category),
+                        ),
+                      ),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -730,11 +762,11 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: _getCategoryColor(news['category']),
+                        color: _getCategoryColor(news.category),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        news['category'],
+                        news.category,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -744,7 +776,7 @@ class _NewsScreenState extends State<NewsScreen> with TickerProviderStateMixin {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      news['title'],
+                      news.title,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
