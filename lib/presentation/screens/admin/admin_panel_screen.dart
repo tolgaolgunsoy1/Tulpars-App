@@ -57,9 +57,9 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                 const SizedBox(height: 24),
                 _buildEventManagementCard(),
                 const SizedBox(height: 16),
+                _buildUserManagementCard(),
+                const SizedBox(height: 16),
                 _buildStatsCards(),
-                const SizedBox(height: 24),
-                _buildUsersSection(),
               ],
             ),
     );
@@ -193,17 +193,95 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     );
   }
 
-  Widget _buildUsersSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Kullanıcılar',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  Widget _buildUserManagementCard() {
+    final totalUsers = _users.length;
+    final activeUsers = _users.where((u) => u.isActive).length;
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.people, color: Color(0xFF003875)),
+                SizedBox(width: 8),
+                Text(
+                  'Kullanıcı Yönetimi',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Toplam $totalUsers kullanıcı, $activeUsers aktif',
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _showUsersDialog(),
+                icon: const Icon(Icons.visibility),
+                label: const Text('Kullanıcıları Görüntüle'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF003875),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        ..._users.map(_buildUserCard),
-      ],
+      ),
+    );
+  }
+
+  void _showUsersDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.8,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.people, color: Color(0xFF003875)),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Kullanıcı Listesi',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _users.length,
+                  itemBuilder: (context, index) {
+                    final user = _users[index];
+                    return _buildUserCard(user);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
