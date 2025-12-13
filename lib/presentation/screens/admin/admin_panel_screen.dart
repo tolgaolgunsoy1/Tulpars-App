@@ -70,7 +70,11 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   }
 
   Widget _buildDemoAdminCard() {
-    final credentials = UserService.getDemoAdminCredentials();
+    const credentials = {
+      'username': 'admin',
+      'email': 'admin@tulpars.org',
+      'password': 'Tulpars2024!',
+    };
     return Card(
       color: const Color(0xFF003875),
       child: Padding(
@@ -83,7 +87,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                 Icon(Icons.admin_panel_settings, color: Colors.white),
                 SizedBox(width: 8),
                 Text(
-                  'Demo Admin Hesabı',
+                  'Admin Hesabı',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -96,20 +100,20 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
             _buildCredentialRow('Kullanıcı Adı', credentials['username']!),
             _buildCredentialRow('E-posta', credentials['email']!),
             _buildCredentialRow('Şifre', credentials['password']!),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
+                color: Colors.green.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.warning_amber, color: Colors.orange, size: 20),
+                  Icon(Icons.verified, color: Colors.green, size: 20),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '30 gün sonra otomatik devre dışı',
+                      'Kalıcı admin hesabı - Süresiz',
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
@@ -303,92 +307,9 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   }
 
   void _showAddNewsDialog() {
-    final titleController = TextEditingController();
-    final contentController = TextEditingController();
-    final authorController = TextEditingController(text: 'Tulpars Derneği');
-    String selectedCategory = 'Genel';
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Yeni Haber Ekle'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Haber Başlığı',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: contentController,
-                  maxLines: 5,
-                  decoration: const InputDecoration(
-                    labelText: 'İçerik',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: selectedCategory,
-                  decoration: const InputDecoration(
-                    labelText: 'Kategori',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['Genel', 'Arama-Kurtarma', 'Eğitim', 'Tatbikat', 'Sosyal']
-                      .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
-                      .toList(),
-                  onChanged: (value) => setState(() => selectedCategory = value!),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: authorController,
-                  decoration: const InputDecoration(
-                    labelText: 'Yazar',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('İptal'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
-                  final news = NewsModel(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    title: titleController.text,
-                    content: contentController.text,
-                    category: selectedCategory,
-                    author: authorController.text,
-                    publishDate: DateTime.now(),
-                    createdAt: DateTime.now(),
-                  );
-                  
-                  final success = await NewsService.addNews(news);
-                  Navigator.pop(context);
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(success ? 'Haber eklendi!' : 'Hata oluştu'),
-                      backgroundColor: success ? Colors.green : Colors.red,
-                    ),
-                  );
-                }
-              },
-              child: const Text('Ekle'),
-            ),
-          ],
-        ),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => _AddNewsScreen(),
       ),
     );
   }
@@ -479,6 +400,16 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                       trailing: PopupMenuButton(
                         itemBuilder: (context) => [
                           const PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text('Düzenle'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
                             value: 'delete',
                             child: Row(
                               children: [
@@ -490,7 +421,14 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                           ),
                         ],
                         onSelected: (value) async {
-                          if (value == 'delete') {
+                          if (value == 'edit') {
+                            Navigator.pop(context);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => _EditEventScreen(event: event),
+                              ),
+                            );
+                          } else if (value == 'delete') {
                             final success = await EventService.deleteEvent(event.id);
                             if (success) {
                               Navigator.pop(context);
@@ -594,6 +532,16 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                       trailing: PopupMenuButton(
                         itemBuilder: (context) => [
                           const PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text('Düzenle'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
                             value: 'delete',
                             child: Row(
                               children: [
@@ -605,7 +553,14 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                           ),
                         ],
                         onSelected: (value) async {
-                          if (value == 'delete') {
+                          if (value == 'edit') {
+                            Navigator.pop(context);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => _EditNewsScreen(news: news),
+                              ),
+                            );
+                          } else if (value == 'delete') {
                             final success = await NewsService.deleteNews(news.id);
                             if (success) {
                               Navigator.pop(context);
@@ -750,121 +705,9 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   }
 
   void _showAddEventDialog() {
-    final titleController = TextEditingController();
-    final descriptionController = TextEditingController();
-    final locationController = TextEditingController();
-    final maxParticipantsController = TextEditingController();
-    DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
-    String selectedCategory = 'Eğitim';
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Yeni Etkinlik Ekle'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Etkinlik Adı',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: descriptionController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Açıklama',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: locationController,
-                  decoration: const InputDecoration(
-                    labelText: 'Konum',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: selectedCategory,
-                  decoration: const InputDecoration(
-                    labelText: 'Kategori',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['Eğitim', 'Tatbikat', 'Sosyal', 'Spor']
-                      .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
-                      .toList(),
-                  onChanged: (value) => setState(() => selectedCategory = value!),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: maxParticipantsController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Maksimum Katılımcı',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ListTile(
-                  title: const Text('Tarih'),
-                  subtitle: Text('${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: selectedDate,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      setState(() => selectedDate = date);
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('İptal'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (titleController.text.isNotEmpty) {
-                  final event = EventModel(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    title: titleController.text,
-                    description: descriptionController.text,
-                    date: selectedDate,
-                    location: locationController.text,
-                    category: selectedCategory,
-                    maxParticipants: int.tryParse(maxParticipantsController.text) ?? 50,
-                    createdAt: DateTime.now(),
-                  );
-                  
-                  final success = await EventService.addEvent(event);
-                  Navigator.pop(context);
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(success ? 'Etkinlik eklendi!' : 'Hata oluştu'),
-                      backgroundColor: success ? Colors.green : Colors.red,
-                    ),
-                  );
-                }
-              },
-              child: const Text('Ekle'),
-            ),
-          ],
-        ),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => _AddEventScreen(),
       ),
     );
   }
@@ -879,6 +722,605 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
         return Colors.orange;
       case UserRole.admin:
         return Colors.red;
+    }
+  }
+}
+
+class _AddEventScreen extends StatefulWidget {
+  @override
+  State<_AddEventScreen> createState() => _AddEventScreenState();
+}
+
+class _AddEventScreenState extends State<_AddEventScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final locationController = TextEditingController();
+  final maxParticipantsController = TextEditingController();
+  DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
+  String selectedCategory = 'Eğitim';
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Yeni Etkinlik Ekle',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF003875),
+        foregroundColor: Colors.white,
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Etkinlik Adı',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Etkinlik adı gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: descriptionController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Açıklama',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Açıklama gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: locationController,
+                decoration: const InputDecoration(
+                  labelText: 'Konum',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Konum gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Kategori',
+                  border: OutlineInputBorder(),
+                ),
+                items: ['Eğitim', 'Tatbikat', 'Sosyal', 'Spor']
+                    .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                    .toList(),
+                onChanged: (value) => setState(() => selectedCategory = value!),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: maxParticipantsController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Maksimum Katılımcı',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value?.isEmpty == true) return 'Katılımcı sayısı gerekli';
+                  if (int.tryParse(value!) == null) return 'Geçerli bir sayı girin';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              Card(
+                child: ListTile(
+                  title: const Text('Etkinlik Tarihi'),
+                  subtitle: Text('${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'),
+                  trailing: const Icon(Icons.calendar_today),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (date != null) {
+                      setState(() => selectedDate = date);
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _saveEvent,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF003875),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Etkinlik Ekle', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _saveEvent() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final event = EventModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: titleController.text,
+      description: descriptionController.text,
+      date: selectedDate,
+      location: locationController.text,
+      category: selectedCategory,
+      maxParticipants: int.parse(maxParticipantsController.text),
+      createdAt: DateTime.now(),
+    );
+
+    final success = await EventService.addEvent(event);
+    
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? 'Etkinlik başarıyla eklendi!' : 'Hata oluştu'),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+}
+
+class _AddNewsScreen extends StatefulWidget {
+  @override
+  State<_AddNewsScreen> createState() => _AddNewsScreenState();
+}
+
+class _AddNewsScreenState extends State<_AddNewsScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final titleController = TextEditingController();
+  final contentController = TextEditingController();
+  final authorController = TextEditingController(text: 'Tulpars Derneği');
+  String selectedCategory = 'Genel';
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Yeni Haber Ekle',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF003875),
+        foregroundColor: Colors.white,
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Haber Başlığı',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Haber başlığı gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: contentController,
+                maxLines: 8,
+                decoration: const InputDecoration(
+                  labelText: 'Haber İçeriği',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Haber içeriği gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Kategori',
+                  border: OutlineInputBorder(),
+                ),
+                items: ['Genel', 'Arama-Kurtarma', 'Eğitim', 'Tatbikat', 'Sosyal']
+                    .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                    .toList(),
+                onChanged: (value) => setState(() => selectedCategory = value!),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: authorController,
+                decoration: const InputDecoration(
+                  labelText: 'Yazar',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Yazar gerekli' : null,
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _saveNews,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF003875),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Haber Yayınla', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _saveNews() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final news = NewsModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: titleController.text,
+      content: contentController.text,
+      category: selectedCategory,
+      author: authorController.text,
+      publishDate: DateTime.now(),
+      createdAt: DateTime.now(),
+    );
+
+    final success = await NewsService.addNews(news);
+    
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? 'Haber başarıyla yayınlandı!' : 'Hata oluştu'),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+}
+
+class _EditEventScreen extends StatefulWidget {
+  final EventModel event;
+  
+  const _EditEventScreen({required this.event});
+
+  @override
+  State<_EditEventScreen> createState() => _EditEventScreenState();
+}
+
+class _EditEventScreenState extends State<_EditEventScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController titleController;
+  late final TextEditingController descriptionController;
+  late final TextEditingController locationController;
+  late final TextEditingController maxParticipantsController;
+  late DateTime selectedDate;
+  late String selectedCategory;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.event.title);
+    descriptionController = TextEditingController(text: widget.event.description);
+    locationController = TextEditingController(text: widget.event.location);
+    maxParticipantsController = TextEditingController(text: widget.event.maxParticipants.toString());
+    selectedDate = widget.event.date;
+    selectedCategory = widget.event.category;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Etkinlik Düzenle',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF003875),
+        foregroundColor: Colors.white,
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Etkinlik Adı',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Etkinlik adı gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: descriptionController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Açıklama',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Açıklama gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: locationController,
+                decoration: const InputDecoration(
+                  labelText: 'Konum',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Konum gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Kategori',
+                  border: OutlineInputBorder(),
+                ),
+                items: ['Eğitim', 'Tatbikat', 'Sosyal', 'Spor']
+                    .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                    .toList(),
+                onChanged: (value) => setState(() => selectedCategory = value!),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: maxParticipantsController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Maksimum Katılımcı',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value?.isEmpty == true) return 'Katılımcı sayısı gerekli';
+                  if (int.tryParse(value!) == null) return 'Geçerli bir sayı girin';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              Card(
+                child: ListTile(
+                  title: const Text('Etkinlik Tarihi'),
+                  subtitle: Text('${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'),
+                  trailing: const Icon(Icons.calendar_today),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (date != null) {
+                      setState(() => selectedDate = date);
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _updateEvent,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF003875),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Etkinlik Güncelle', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _updateEvent() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final updatedEvent = EventModel(
+      id: widget.event.id,
+      title: titleController.text,
+      description: descriptionController.text,
+      date: selectedDate,
+      location: locationController.text,
+      category: selectedCategory,
+      maxParticipants: int.parse(maxParticipantsController.text),
+      currentParticipants: widget.event.currentParticipants,
+      isActive: widget.event.isActive,
+      createdAt: widget.event.createdAt,
+    );
+
+    final success = await EventService.updateEvent(updatedEvent);
+    
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? 'Etkinlik başarıyla güncellendi!' : 'Hata oluştu'),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+}
+
+class _EditNewsScreen extends StatefulWidget {
+  final NewsModel news;
+  
+  const _EditNewsScreen({required this.news});
+
+  @override
+  State<_EditNewsScreen> createState() => _EditNewsScreenState();
+}
+
+class _EditNewsScreenState extends State<_EditNewsScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController titleController;
+  late final TextEditingController contentController;
+  late final TextEditingController authorController;
+  late String selectedCategory;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.news.title);
+    contentController = TextEditingController(text: widget.news.content);
+    authorController = TextEditingController(text: widget.news.author);
+    selectedCategory = widget.news.category;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Haber Düzenle',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF003875),
+        foregroundColor: Colors.white,
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Haber Başlığı',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Haber başlığı gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: contentController,
+                maxLines: 8,
+                decoration: const InputDecoration(
+                  labelText: 'Haber İçeriği',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Haber içeriği gerekli' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Kategori',
+                  border: OutlineInputBorder(),
+                ),
+                items: ['Genel', 'Arama-Kurtarma', 'Eğitim', 'Tatbikat', 'Sosyal']
+                    .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                    .toList(),
+                onChanged: (value) => setState(() => selectedCategory = value!),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: authorController,
+                decoration: const InputDecoration(
+                  labelText: 'Yazar',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value?.isEmpty == true ? 'Yazar gerekli' : null,
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _updateNews,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF003875),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Haber Güncelle', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _updateNews() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final updatedNews = NewsModel(
+      id: widget.news.id,
+      title: titleController.text,
+      content: contentController.text,
+      category: selectedCategory,
+      imageUrl: widget.news.imageUrl,
+      publishDate: widget.news.publishDate,
+      author: authorController.text,
+      isPublished: widget.news.isPublished,
+      viewCount: widget.news.viewCount,
+      createdAt: widget.news.createdAt,
+    );
+
+    final success = await NewsService.updateNews(updatedNews);
+    
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? 'Haber başarıyla güncellendi!' : 'Hata oluştu'),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
     }
   }
 }
