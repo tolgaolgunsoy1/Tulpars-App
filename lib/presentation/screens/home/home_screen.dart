@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       '/main': 0,
       '/news': 1,
       '/education': 2,
-      '/sports': 3,
+      '/events': 3,
       '/profile': 4,
     };
     return routeIndexMap[location] ?? 0;
@@ -998,10 +998,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildQuickLinks() {
     final links = [
       const _QuickLink(
-        icon: Icons.sports_basketball,
-        label: 'Spor',
+        icon: Icons.event,
+        label: 'Etkinlik',
         color: _primaryColor,
-        route: '/sports',
+        route: '/events',
       ),
       const _QuickLink(
         icon: Icons.school,
@@ -1090,7 +1090,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 selectedIcon: Icons.event,
                 label: 'Etkinlik',
                 index: 3,
-                route: '/sports',
+                route: '/events',
                 isSelected: selectedIndex == 3,
               ),
               _NavItem(
@@ -1163,11 +1163,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 _DrawerItem(
-                  icon: Icons.sports_basketball_outlined,
-                  title: 'Gençlik Spor Kulübü',
+                  icon: Icons.event_outlined,
+                  title: 'Etkinlikler',
                   onTap: () {
                     Navigator.pop(context);
-                    context.go('/sports');
+                    context.go('/events');
                   },
                 ),
                 _DrawerItem(

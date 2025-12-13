@@ -29,6 +29,7 @@ import 'presentation/screens/profile/association_profile_screen.dart';
 import 'presentation/screens/profile/profile_wrapper.dart';
 import 'presentation/screens/settings/settings_screen.dart';
 import 'presentation/screens/sports/sports_screen.dart';
+import 'presentation/screens/events/events_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/onboarding/onboarding_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
@@ -306,6 +307,10 @@ class _TulparsAppState extends State<TulparsApp> with WidgetsBindingObserver {
           GoRoute(
             path: '/sports',
             builder: (context, state) => const SportsScreen(),
+          ),
+          GoRoute(
+            path: '/events',
+            builder: (context, state) => const EventsScreen(),
           ),
           GoRoute(
             path: '/education',
