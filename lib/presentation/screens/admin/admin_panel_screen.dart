@@ -393,6 +393,129 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     );
   }
 
+  void _showEventsListDialog() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'Etkinlik Listesi',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: const Color(0xFF003875),
+            foregroundColor: Colors.white,
+          ),
+          body: FutureBuilder<List<EventModel>>(
+            future: EventService.getEvents(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              
+              final eventsList = snapshot.data ?? [];
+              
+              if (eventsList.isEmpty) {
+                return const Center(
+                  child: Text('Henüz etkinlik yok'),
+                );
+              }
+              
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: eventsList.length,
+                itemBuilder: (context, index) {
+                  final event = eventsList[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: ListTile(
+                      title: Text(
+                        event.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(event.description),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF003875).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  event.category,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Color(0xFF003875),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                event.timeUntilEvent,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${event.currentParticipants}/${event.maxParticipants} katılımcı',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete, color: Colors.red),
+                                SizedBox(width: 8),
+                                Text('Sil'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onSelected: (value) async {
+                          if (value == 'delete') {
+                            final success = await EventService.deleteEvent(event.id);
+                            if (success) {
+                              Navigator.pop(context);
+                              _showEventsListDialog(); // Refresh
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Etkinlik silindi'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showNewsListDialog() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -594,17 +717,31 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _showAddEventDialog(),
-                icon: const Icon(Icons.add),
-                label: const Text('Yeni Etkinlik Ekle'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF003875),
-                  foregroundColor: Colors.white,
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showAddEventDialog(),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Yeni Etkinlik'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF003875),
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showEventsListDialog(),
+                    icon: const Icon(Icons.list),
+                    label: const Text('Etkinlikleri Gör'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF003875),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
