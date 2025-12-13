@@ -241,44 +241,31 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   }
 
   void _showUsersDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.8,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.people, color: Color(0xFF003875)),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Kullanıcı Listesi',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'Kullanıcı Listesi',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _users.length,
-                  itemBuilder: (context, index) {
-                    final user = _users[index];
-                    return _buildUserCard(user);
-                  },
-                ),
-              ),
-            ],
+            ),
+            backgroundColor: const Color(0xFF003875),
+            foregroundColor: Colors.white,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _users.length,
+            itemBuilder: (context, index) {
+              final user = _users[index];
+              return _buildUserCard(user);
+            },
           ),
         ),
       ),
